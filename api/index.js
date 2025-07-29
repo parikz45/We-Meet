@@ -18,6 +18,8 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+app.options('*', cors());  
+
 // using dependencies
 const express = require("express");
 const app = express();
