@@ -20,7 +20,7 @@ function Profile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/api/users?username=${userName}`);
+        const res = await axios.get(`https://we-meet-9jye.onrender.com//api/users?username=${userName}`);
         setUser(res.data);
       } catch (err) {
         console.error("Error fetching user:", err);
@@ -39,11 +39,11 @@ function Profile() {
 
     try {
       // Upload the file to server
-      const response = await axios.post("http://localhost:8800/api/upload", data);
+      const response = await axios.post("https://we-meet-9jye.onrender.com//api/upload", data);
       const imgPreview = response.data.filename;
 
       // Update the user's profile picture in the database
-      await axios.put(`http://localhost:8800/api/users/${user._id}`, {
+      await axios.put(`https://we-meet-9jye.onrender.com//api/users/${user._id}`, {
         userId: currentUser._id,
         profilePicture: imgPreview,
       });

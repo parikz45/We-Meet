@@ -14,7 +14,7 @@ function Details() {
   // collecting and loading user details
   const handleSubmit = async () => {
     try {
-      const userDetails = await axios.put(`http://localhost:8800/api/users/${User._id}`,
+      const userDetails = await axios.put(`https://we-meet-9jye.onrender.com//api/users/${User._id}`,
         {
           userId: User._id,
           state: currentState || User.state || "",

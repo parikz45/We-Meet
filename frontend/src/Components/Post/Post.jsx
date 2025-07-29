@@ -21,7 +21,7 @@ function Post({ post }) {
   // Handles like/unlike toggle and updates UI instantly
   const likeHandler = () => {
     try {
-      axios.put(`http://localhost:8800/api/posts/${post._id}/like`, {
+      axios.put(`https://we-meet-9jye.onrender.com//api/posts/${post._id}/like`, {
         userId: currentUser._id,
       });
     } catch (err) {
@@ -43,7 +43,7 @@ function Post({ post }) {
     const fetchUser = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8800/api/users?userId=${post.userId}`
+          `https://we-meet-9jye.onrender.com//api/users?userId=${post.userId}`
         );
         setUser(res.data);
       } catch (err) {
@@ -56,7 +56,7 @@ function Post({ post }) {
   // Handle actual delete request
   const handleDelete = () => {
     try {
-      axios.delete(`http://localhost:8800/api/posts/${post._id}`, {
+      axios.delete(`https://we-meet-9jye.onrender.com//api/posts/${post._id}`, {
         data: { userId: currentUser._id },
       });
       window.location.reload(); // Refresh after deletion
