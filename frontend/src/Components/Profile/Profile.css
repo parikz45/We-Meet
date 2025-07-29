@@ -1,0 +1,91 @@
+/* Container for the entire home/profile page layout */
+.home-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-left: 15px;
+}
+
+/* Main center section of the profile (cover image, profile picture, posts, etc.) */
+.profile-mid-top {
+    flex: 8;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Lower section under the profile cover (e.g., posts + sidebar) */
+.profile-mid-bottom {
+    display: flex;
+    flex-direction: row;
+    margin-top: 50px;
+}
+
+/* Feed (posts) section styling */
+.feed {
+    margin-top: 50px;
+    flex: 3;
+}
+
+/* Outer container for the profile (used for positioning overlay elements) */
+.profile-container {
+    position: relative;
+}
+
+/* Cover image at the top of the profile */
+.cover-Img {
+    height: 400px;
+    width: 100%;
+}
+
+/* Right sidebar in the profile layout */
+.ProfileRight {
+    flex: 2;
+    margin-top: 75px;
+}
+
+/* Name displayed on the profile, positioned over the cover image */
+.profile-Name {
+    position: absolute;
+    bottom: -90px;  
+    left: 48.5%;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+/* Container holding the profile image and upload icon */
+.profile-imgContainer {
+    position: relative;
+    display: inline-block;
+    right: 595px;
+}
+
+/* Upload icon that appears when hovering over the profile image */
+.upload-icon {
+    position: absolute;
+    bottom: -10px;
+    right: -40px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    padding: 6px;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+
+/* Show upload icon on hover */
+.profile-imgContainer:hover .upload-icon {
+    opacity: 0.8;
+}
+
+/* Circular profile image placed partially over the cover photo */
+.profile-pic {
+    border-radius: 50%;
+    height: 130px;
+    width: 130px;
+    border: 5px solid white;
+    position: absolute;
+    object-fit: cover;
+    bottom: -70px;  
+    left: 45%;
+}

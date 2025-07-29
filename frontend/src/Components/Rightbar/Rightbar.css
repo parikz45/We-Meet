@@ -1,0 +1,59 @@
+/* Right sidebar container */
+.rightbar {
+    flex: 4;
+    margin-top: 40px;
+    padding-left: 15px;
+}
+
+/* Top section containing ad icon and label */
+.right-top {
+    display: flex;
+    margin-left: 15px;
+}
+
+/* Text next to the campaign icon (like "Ad") */
+.birthday {
+    margin-left: 8px;
+    margin-top: 4px;
+    font-size: 17px;
+}
+
+/* Image for the advertisement */
+.right-img {
+    border-radius: 10px;
+    width: 440px;
+    margin-left: 15px;
+    margin-top: 25px;
+}
+
+/* Bottom section showing online friends */
+.right-bottom {
+    margin-top: 25px;
+    margin-left: 15px;
+}
+
+/* Heading for the online friends section */
+.bottom-head {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/* Placeholder for individual friend */
+.friend {
+    margin-top: 25px;
+}
+
+/*Profile image style */
+.friend-img {
+    width: 40px;
+    height: 40px;
+}
+
+/* Style for displaying friend's name */
+.friend-name {
+    font-size: 16px;
+}
+
+.set:hover{
+    transform: scale(1.03);
+}
