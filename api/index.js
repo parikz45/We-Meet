@@ -1,3 +1,23 @@
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://we-meet-ebon.vercel.app"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman) or whitelisted ones
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 // using dependencies
 const express = require("express");
 const app = express();
@@ -30,26 +50,6 @@ app.use(
 );
 app.use(morgan("common"));
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://we-meet-ebon.vercel.app"
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like Postman) or whitelisted ones
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
 
 
 
@@ -59,7 +59,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/conversations", conversationRoute);
-app.use("/api/notifications",notificationRoute);
+app.use("/api/notifications", notificationRoute);
 
 // 🔧 Multer Storage Config
 const storage = multer.diskStorage({
