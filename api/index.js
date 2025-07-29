@@ -33,7 +33,7 @@ app.use(morgan("common"));
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://we-meet-ebon.vercel.app/"
+  "https://we-meet-ebon.vercel.app"
 ];
 
 app.use(cors({
