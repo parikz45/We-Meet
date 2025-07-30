@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const http = require("http");
 const cors = require("cors");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
@@ -122,7 +123,9 @@ mongoose.connect(process.env.Mongo_Url, {
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // ✅ Start Server
+const server = http.createServer(app);
 const PORT = process.env.PORT || 8800;
-app.listen(PORT, () => {
+
+server.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
 });

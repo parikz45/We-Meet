@@ -187,7 +187,10 @@ function Messenger() {
 
     // setup socket connection and receive real-time messages
     useEffect(() => {
-        socket.current = io("ws://localhost:8900");
+        socket.current = io("wss://we-meet-production.up.railway.app", {
+            transports: ['websocket'],
+        });
+
         socket.current.on("getMessage", (data) => {
             setArrivalMessage(data);
         });
