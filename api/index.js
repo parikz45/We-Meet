@@ -1,26 +1,3 @@
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://we-meet-ebon.vercel.app"
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like Postman) or whitelisted ones
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
-app.options('*', cors());  
-
-// using dependencies
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -32,6 +9,7 @@ const multer = require("multer");
 const path = require("path");
 const Message = require("./Models/Message");
 
+// ✅ Load routes
 const userRoute = require('./routes/user');
 const authRoute = require('./routes/auth');
 const postRoute = require('./routes/post');
@@ -39,23 +17,42 @@ const messageRoute = require('./routes/messages');
 const conversationRoute = require('./routes/conversations');
 const notificationRoute = require('./routes/notifications');
 
+// ✅ Load environment variables
 dotenv.config();
 
-//  Serve static files from public/images
-app.use("/images", express.static(path.join(__dirname, "public/images")));
+// ✅ Allowed Origins (include Vercel + Railway domains)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://we-meet-ebon.vercel.app",
+  "https://we-meet-production.up.railway.app"
+];
 
-
+// ✅ Middleware
 app.use(express.json());
 app.use(helmet());
-app.use(
-  helmet.crossOriginResourcePolicy({ policy: "cross-origin" })
-);
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 
+// ✅ CORS
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
+// ✅ Static File Serving
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+app.use("/api/messages/audio", express.static(path.join(__dirname, "public/audios")));
 
-
-// 🔧 Routes
+// ✅ Routes
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
@@ -63,8 +60,8 @@ app.use("/api/messages", messageRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/notifications", notificationRoute);
 
-// 🔧 Multer Storage Config
-const storage = multer.diskStorage({
+// ✅ Multer Config (images)
+const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "public/images"));
   },
@@ -73,10 +70,10 @@ const storage = multer.diskStorage({
     cb(null, uniqueName);
   }
 });
+const upload = multer({ storage: imageStorage });
 
-const upload = multer({ storage });
-
-const Storage = multer.diskStorage({
+// ✅ Multer Config (audio)
+const audioStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "public/audios"));
   },
@@ -85,10 +82,9 @@ const Storage = multer.diskStorage({
     cb(null, uniqueName);
   }
 });
+const Upload = multer({ storage: audioStorage });
 
-const Upload = multer({ storage: Storage });
-
-// Upload Route
+// ✅ Upload Routes
 app.post("/api/upload", upload.single("file"), (req, res) => {
   try {
     console.log("File uploaded:", req.file);
@@ -99,7 +95,6 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   }
 });
 
-// upload audios
 app.post("/api/messages/audio", Upload.single("audio"), async (req, res) => {
   if (!req.file || !req.body.sender || !req.body.conversationId) {
     return res.status(400).json("Missing file or metadata");
@@ -117,11 +112,8 @@ app.post("/api/messages/audio", Upload.single("audio"), async (req, res) => {
     res.status(500).json(err);
   }
 });
-app.use("/api/messages/audio", express.static(path.join(__dirname, "public/audios")));
 
-
-
-//  MongoDB Connect
+// ✅ MongoDB Connect
 mongoose.connect(process.env.Mongo_Url, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -129,9 +121,8 @@ mongoose.connect(process.env.Mongo_Url, {
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// ✅ Server Listening
+// ✅ Start Server
 const PORT = process.env.PORT || 8800;
 app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
 });
-
