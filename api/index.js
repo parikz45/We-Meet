@@ -10,7 +10,7 @@ const multer = require("multer");
 const path = require("path");
 const Message = require("./Models/Message");
 
-// ✅ Load routes
+// Load routes
 const userRoute = require('./routes/user');
 const authRoute = require('./routes/auth');
 const postRoute = require('./routes/post');
@@ -18,10 +18,10 @@ const messageRoute = require('./routes/messages');
 const conversationRoute = require('./routes/conversations');
 const notificationRoute = require('./routes/notifications');
 
-// ✅ Load environment variables
+// Load environment variables
 dotenv.config();
 
-// ✅ Allowed Origins (include Vercel + Railway domains)
+// Allowed Origins 
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
@@ -29,31 +29,28 @@ const allowedOrigins = [
   "https://we-meet-production.up.railway.app"
 ];
 
-// ✅ Middleware
+// Middleware
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 
-// ✅ CORS
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+// CORS
+app.use(
+  cors({
+    origin: ["https://we-meet-ebon.vercel.app", "http://localhost:5173"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
-// ✅ Static File Serving
+
+// Static File Serving
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use("/api/messages/audio", express.static(path.join(__dirname, "public/audios")));
 
-// ✅ Routes
+// Routes
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
@@ -61,7 +58,7 @@ app.use("/api/messages", messageRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/notifications", notificationRoute);
 
-// ✅ Multer Config (images)
+// Multer Config (images)
 const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "public/images"));
@@ -73,7 +70,7 @@ const imageStorage = multer.diskStorage({
 });
 const upload = multer({ storage: imageStorage });
 
-// ✅ Multer Config (audio)
+// Multer Config (audio)
 const audioStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "public/audios"));
@@ -85,7 +82,7 @@ const audioStorage = multer.diskStorage({
 });
 const Upload = multer({ storage: audioStorage });
 
-// ✅ Upload Routes
+// Upload Routes
 app.post("/api/upload", upload.single("file"), (req, res) => {
   try {
     console.log("File uploaded:", req.file);
@@ -114,7 +111,7 @@ app.post("/api/messages/audio", Upload.single("audio"), async (req, res) => {
   }
 });
 
-// ✅ MongoDB Connect
+// MongoDB Connect
 mongoose.connect(process.env.Mongo_Url, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -122,7 +119,7 @@ mongoose.connect(process.env.Mongo_Url, {
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// ✅ Start Server
+// Start Server
 const server = http.createServer(app);
 const PORT = process.env.PORT || 8800;
 
