@@ -121,7 +121,12 @@ mongoose.connect(process.env.Mongo_Url, {
 
 // Start Server
 const server = http.createServer(app);
-const PORT = process.env.PORT || 8800;
+const PORT = process.env.PORT ;
+
+if (!PORT) {
+    console.error("Error: The PORT environment variable is not set.");
+    process.exit(1);
+}
 
 server.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
