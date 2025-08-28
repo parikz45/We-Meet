@@ -49,7 +49,7 @@ function Navbar() {
   useEffect(() => {
     const findAllUsers = async () => {
       try {
-        const res = await axios.get("https://we-meet-production.up.railway.app/api/users/all");
+        const res = await axios.get("https://we-meet-mecf4.sevalla.app//api/users/all");
         setAllUsers(res.data);
       } catch (err) {
         console.log(err);
@@ -69,7 +69,7 @@ function Navbar() {
   // remove user's profile picture
   const removeDp = async () => {
     try {
-      const res = await axios.put(`https://we-meet-production.up.railway.app/api/users/${user._id}`, {
+      const res = await axios.put(`https://we-meet-mecf4.sevalla.app//api/users/${user._id}`, {
         userId: user._id,
         profilePicture: ""
       });
