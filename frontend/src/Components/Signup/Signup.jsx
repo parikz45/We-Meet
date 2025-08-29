@@ -32,7 +32,7 @@ function Signup() {
 
       try {
         // Send POST request to register user
-        const res = await axios.post("https://we-meet-mecf4.sevalla.app//api/auth/register", user);
+        const res = await axios.post("https://we-meet-mecf4.sevalla.app/api/auth/register", user);
 
         // Save user to localStorage and navigate to details page
         localStorage.setItem("user", JSON.stringify(res.data));

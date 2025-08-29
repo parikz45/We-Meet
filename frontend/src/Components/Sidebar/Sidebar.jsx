@@ -15,7 +15,7 @@ function Sidebar() {
         const getFriends = async () => {
             if (!user._id) return;
             try {
-                const friendList = await axios.get(`https://we-meet-mecf4.sevalla.app//api/users/friends/${user._id}`);
+                const friendList = await axios.get(`https://we-meet-mecf4.sevalla.app/api/users/friends/${user._id}`);
                 setFriends(friendList.data); // Set retrieved friends
             } catch (err) {
                 console.error("Error fetching friends:", err.response?.data || err.message);

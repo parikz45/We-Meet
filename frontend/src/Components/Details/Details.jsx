@@ -14,7 +14,7 @@ function Details() {
   // collecting and loading user details
   const handleSubmit = async () => {
     try {
-      const userDetails = await axios.put(`https://we-meet-mecf4.sevalla.app//api/users/${User._id}`,
+      const userDetails = await axios.put(`https://we-meet-mecf4.sevalla.app/api/users/${User._id}`,
         {
           userId: User._id,
           state: currentState || User.state || "",

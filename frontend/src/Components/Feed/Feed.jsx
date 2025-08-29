@@ -14,8 +14,8 @@ function Feed({ username }) {
     const fetchPosts = async () => {
       try {
         const response = username
-          ? await axios.get("https://we-meet-mecf4.sevalla.app//api/posts/profile/" + username)
-          : await axios.get("https://we-meet-mecf4.sevalla.app//api/posts/timeline/" + user._id);
+          ? await axios.get("https://we-meet-mecf4.sevalla.app/api/posts/profile/" + username)
+          : await axios.get("https://we-meet-mecf4.sevalla.app/api/posts/timeline/" + user._id);
 
         setPost(
           response.data.sort((p1, p2) => {
