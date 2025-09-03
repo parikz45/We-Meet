@@ -1,11 +1,14 @@
 {
-  "name": "social_media",
+  "name": "social_media_backend",
   "version": "1.0.0",
-  "description": "a social media website",
+  "description": "Backend for a social media website",
   "main": "index.js",
   "scripts": {
-    "start": "sh -c 'npm run build && node index.js'",
+    "start": "node index.js",
     "dev": "nodemon index.js"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +24,6 @@
     "multer": "^2.0.1",
     "nodemon": "^3.1.9",
     "path": "^0.12.7",
-    "react-router-dom": "^7.2.0",
     "timeago.js": "^4.0.2"
   },
   "proxy": "/api"
