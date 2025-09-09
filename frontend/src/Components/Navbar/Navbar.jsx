@@ -1,55 +1,56 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { Search, Person, Notifications, Chat } from "@mui/icons-material";
-import './Navbar.css';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import axios from 'axios';
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, dispatch } = useContext(AuthContext);
   const PF = import.meta.env.VITE_PUBLIC_FOLDER;
   const [logout, setLogout] = useState(false);
   const moreRef = useRef();
-  const { dispatch } = useContext(AuthContext);
-  const [notifications, setNotifications] = useState("");
   const [searchquery, setSearchquery] = useState("");
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [checkLogout, setCheckLogout] = useState(false);
   const [checkRemoveDp, setCheckRemoveDp] = useState(false);
-
-  // hide logout dropdown when clicking outside
-  const handleClickOutside = (event) => {
-    if (moreRef.current && !moreRef.current.contains(event.target)) {
-      setLogout(false);
-    }
-  };
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // toggle logout options dropdown
-  const logoutBar = () => {
-    setLogout((prev) => !prev);
-  }
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (moreRef.current && !moreRef.current.contains(event.target)) {
+        setLogout(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  // log the user out
+  const logoutBar = () => setLogout((prev) => !prev);
+
   const Logout = () => {
     localStorage.removeItem("user");
     dispatch({ type: "LOGOUT" });
     navigate("/login");
-  }
+  };
 
-  // fetch all users for search functionality
   useEffect(() => {
     const findAllUsers = async () => {
       try {
-        const res = await axios.get("https://we-meet-mecf4.sevalla.app/api/users/all");
+        const res = await axios.get(
+          "https://we-meet-mecf4.sevalla.app/api/users/all"
+        );
         setAllUsers(res.data);
       } catch (err) {
         console.log(err);
@@ -58,136 +59,299 @@ function Navbar() {
     findAllUsers();
   }, []);
 
-  // filter users based on search query
   const findPeople = (query) => {
-    const filtered = allUsers.filter(user =>
-      user.username.toLowerCase().includes(query.toLowerCase())
+    const filtered = allUsers.filter((u) =>
+      u.username.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredUsers(filtered);
   };
 
-  // remove user's profile picture
   const removeDp = async () => {
     try {
-      const res = await axios.put(`https://we-meet-mecf4.sevalla.app/api/users/${user._id}`, {
-        userId: user._id,
-        profilePicture: ""
-      });
-
-      // update localStorage and context
-      const updatedUser = {
-        ...user,
-        profilePicture: "",
-      };
+      const updatedUser = { ...user, profilePicture: "" };
+      await axios.put(
+        `https://we-meet-mecf4.sevalla.app/api/users/${user._id}`,
+        {
+          userId: user._id,
+          profilePicture: "",
+        }
+      );
       localStorage.setItem("user", JSON.stringify(updatedUser));
       dispatch({ type: "UPDATE_PROFILE_PIC", payload: "" });
-
       setCheckRemoveDp(false);
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   return (
-    <div className='navbar-container'>
-      <div className='navbar-left'>
-        {/* logo / home navigation */}
-        <span onClick={() => navigate('/')} className='logo'>Social Media</span>
+    <div className="w-full h-[60px] bg-blue-600 flex items-center px-4 md:px-8 relative">
+      {/* Left - Logo */}
+      <div className="flex-3">
+        <span
+          onClick={() => navigate("/")}
+          className="text-white font-bold text-xl cursor-pointer"
+        >
+          Social Media
+        </span>
       </div>
 
-      <div className='navbar-center'>
-        {/* search bar */}
-        <div className='searchbar'>
-          <Search className='search-icon' />
-          <input
-            value={searchquery}
-            onChange={(e) => {
-              const val = e.target.value;
-              setSearchquery(val);
-              findPeople(val);
-            }}
-            placeholder='Search for a friend'
-            className='searchfield'
-          />
-        </div>
-      </div>
-
-      <div className='navbar-right'>
-        {/* links */}
-        <div className='navbar-links'>
-          <span onClick={() => navigate('/profile/' + user.username)} className='navbarlink'>Homepage</span>
-          <span onClick={() => navigate("/chat")} className='navbarlink'>Chats</span>
-        </div>
-
-        {/* icon section */}
-        <div className='navbar-icons'>
-          <div className='icon-items'>
-            <Person />
-            {notifications && <span className='iconitems-badge'>{notifications}</span>}
-          </div>
-          <div onClick={() => navigate("/chat")} className='icon-items'>
-            <Chat />
-          </div>
-          <div className='icon-items'>
-            <Notifications />
-          </div>
-        </div>
-
-        {/* user profile + dropdown menu */}
-        <div ref={moreRef}>
-          <img
-            onClick={logoutBar}
-            className='profile-Image'
-            src={user.profilePicture ? PF + user.profilePicture : PF + 'profile.jpg'}
-          />
-          <div className={`logout ${logout ? "visible" : ""}`}>
-            <span onClick={() => setCheckLogout(true)} className="logout-span">🔒 Log out</span>
-            <span onClick={() => navigate("/details")} className="logout-span">📝 Update personal details</span>
-            <span onClick={() => setCheckRemoveDp(true)} className="logout-span">🖼️ Remove profile picture</span>
-          </div>
-        </div>
-      </div>
-
-      {/* search results */}
-      {searchquery && filteredUsers.length > 0 && (
-        <div className="search-results">
-          {filteredUsers.map((filteredUser) => (
+      {isMobile ? (
+        <>
+          {/* Right - Mobile */}
+          <div className="ml-auto flex items-center gap-4 text-white">
+            <div onClick={() => setIsMobileSearchOpen(true)} className="cursor-pointer">
+              <Search />
+            </div>
             <div
-              key={filteredUser._id}
-              className="search-result-item"
-              onClick={() => navigate(`/profile/${filteredUser.username}`)}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="cursor-pointer"
             >
-              {filteredUser.username}
+              {isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+            </div>
+          </div>
+
+          {/* Mobile Dropdown */}
+          {isMobileMenuOpen && (
+            <div className="absolute top-[70px] right-4 bg-white shadow-lg rounded-lg flex flex-col gap-2 p-4 text-sm">
+              <span
+                onClick={() => {
+                  navigate(`/profile/${user.username}`);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="cursor-pointer"
+              >
+                Homepage
+              </span>
+              <span
+                onClick={() => {
+                  navigate("/chat");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="cursor-pointer"
+              >
+                Chats
+              </span>
+              <span
+                onClick={() => {
+                  setCheckLogout(true);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="cursor-pointer"
+              >
+                🔒 Log out
+              </span>
+              <span
+                onClick={() => {
+                  navigate("/details");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="cursor-pointer"
+              >
+                📝 Update details
+              </span>
+              <span
+                onClick={() => {
+                  setCheckRemoveDp(true);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="cursor-pointer"
+              >
+                🖼️ Remove DP
+              </span>
+            </div>
+          )}
+
+          {/* Mobile Search */}
+          {isMobileSearchOpen && (
+            <div className="fixed inset-0 bg-white flex flex-col z-50 p-4">
+              <div className="flex items-center border rounded-full px-3 py-2 shadow">
+                <Search className="text-gray-500" />
+                <input
+                  value={searchquery}
+                  onChange={(e) => {
+                    setSearchquery(e.target.value);
+                    findPeople(e.target.value);
+                  }}
+                  placeholder="Search for a friend"
+                  className="flex-1 outline-none px-2"
+                  autoFocus
+                />
+                <CloseIcon
+                  onClick={() => {
+                    setIsMobileSearchOpen(false);
+                    setSearchquery("");
+                  }}
+                  className="cursor-pointer text-gray-500"
+                />
+              </div>
+              {searchquery && filteredUsers.length > 0 && (
+                <div className="mt-3 bg-gray-100 rounded-lg shadow">
+                  {filteredUsers.map((u) => (
+                    <div
+                      key={u._id}
+                      className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => {
+                        navigate(`/profile/${u.username}`);
+                        setIsMobileSearchOpen(false);
+                        setSearchquery("");
+                      }}
+                    >
+                      {u.username}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Desktop Center - Search */}
+          <div className="flex-5 px-4">
+            <div className="bg-white h-9 rounded-full flex items-center px-3 shadow">
+              <Search className="text-gray-500" />
+              <input
+                value={searchquery}
+                onChange={(e) => {
+                  setSearchquery(e.target.value);
+                  findPeople(e.target.value);
+                }}
+                placeholder="Search for a friend"
+                className="flex-1 outline-none px-2"
+              />
+            </div>
+          </div>
+
+          {/* Desktop Right */}
+          <div className="flex-4 flex items-center justify-end gap-6 text-white">
+            <div className="hidden md:flex gap-6">
+              <span
+                onClick={() => navigate(`/profile/${user.username}`)}
+                className="cursor-pointer"
+              >
+                Homepage
+              </span>
+              <span
+                onClick={() => navigate("/chat")}
+                className="cursor-pointer"
+              >
+                Chats
+              </span>
+            </div>
+
+            <div className="flex gap-4">
+              <div onClick={() => navigate("/chat")} className="cursor-pointer">
+                <Chat />
+              </div>
+              <div className="cursor-pointer">
+                <Notifications />
+              </div>
+            </div>
+
+            {/* Profile dropdown */}
+            <div className="relative" ref={moreRef}>
+              <img
+                onClick={logoutBar}
+                src={
+                  user.profilePicture
+                    ? PF + user.profilePicture
+                    : PF + "profile.jpg"
+                }
+                className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                alt="Profile"
+              />
+              {logout && (
+                <div className="absolute right-0 top-12 bg-white text-black rounded-lg shadow-lg flex flex-col text-sm w-56">
+                  <span
+                    onClick={() => setCheckLogout(true)}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    🔒 Log out
+                  </span>
+                  <span
+                    onClick={() => navigate("/details")}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    📝 Update personal details
+                  </span>
+                  <span
+                    onClick={() => setCheckRemoveDp(true)}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    🖼️ Remove profile picture
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Desktop Search Results */}
+      {searchquery && filteredUsers.length > 0 && !isMobile && (
+        <div className="absolute top-[60px] left-1/4 w-[600px] bg-white rounded-lg shadow max-h-72 overflow-y-auto z-50">
+          {filteredUsers.map((u) => (
+            <div
+              key={u._id}
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={() => navigate(`/profile/${u.username}`)}
+            >
+              {u.username}
             </div>
           ))}
         </div>
       )}
 
-      {/* logout confirmation dialog */}
-      {checkLogout &&
-        <div className='logout-overlay'>
-          <div className="logout-div">
-            <span style={{fontWeight:"500"}}>Are you sure you want to Log out ?</span>
-            <div className="logoutButtons">
-              <button className="logout-cancel" onClick={() => setCheckLogout(false)}>Cancel</button>
-              <button className="logout-confirm" onClick={Logout}>Log out</button>
+      {/* Logout Confirm */}
+      {checkLogout && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
+            <span className="font-semibold text-lg block mb-4">
+              Are you sure you want to Log out?
+            </span>
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+                onClick={() => setCheckLogout(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded"
+                onClick={Logout}
+              >
+                Log out
+              </button>
             </div>
           </div>
         </div>
-      }
+      )}
 
-      {/* remove profile picture confirmation dialog */}
-      {checkRemoveDp &&
-        <div className='logout-overlay'>
-          <div className="logout-div">
-            <span style={{ fontWeight: "500" }}>Are you sure you want to remove your profile picture?</span>
-            <div className="logoutButtons">
-              <button className="logout-cancel" onClick={() => setCheckRemoveDp(false)}>Cancel</button>
-              <button className="logout-confirm" onClick={removeDp}>Remove</button>
+      {/* Remove DP Confirm */}
+      {checkRemoveDp && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
+            <span className="font-semibold text-lg block mb-4">
+              Are you sure you want to remove your profile picture?
+            </span>
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+                onClick={() => setCheckRemoveDp(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded"
+                onClick={removeDp}
+              >
+                Remove
+              </button>
             </div>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 }
