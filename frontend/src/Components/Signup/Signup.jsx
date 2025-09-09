@@ -1,29 +1,22 @@
-import React, { useRef } from 'react';
-import './Signup.css';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Signup() {
   const navigate = useNavigate();
 
-  // Refs for form inputs
   const username = useRef();
   const email = useRef();
   const password = useRef();
   const passwordAgain = useRef();
 
-  // Handles user signup and password confirmation
   const handleClick = async (e) => {
     e.preventDefault();
-
-    // Clear any existing custom validation messages
     passwordAgain.current.setCustomValidity("");
 
-    // Check if passwords match
     if (password.current.value !== passwordAgain.current.value) {
       passwordAgain.current.setCustomValidity("The passwords do not match");
     } else {
-      // Create user object
       const user = {
         username: username.current.value,
         email: email.current.value,
@@ -31,13 +24,12 @@ function Signup() {
       };
 
       try {
-        // Send POST request to register user
-        const res = await axios.post("https://we-meet-mecf4.sevalla.app/api/auth/register", user);
-
-        // Save user to localStorage and navigate to details page
+        const res = await axios.post(
+          "https://we-meet-mecf4.sevalla.app/api/auth/register",
+          user
+        );
         localStorage.setItem("user", JSON.stringify(res.data));
         navigate("/details");
-
       } catch (err) {
         console.log(err);
         alert("Cannot sign up user!");
@@ -46,63 +38,70 @@ function Signup() {
   };
 
   return (
-    <div className='Signup-page'>
-      {/* Left side text section */}
-      <div className='page-Text'>
-        <span className='page-name'>Social Media</span>
-        <span className='page-description'>Speak, Create, Connect</span>
+    <div className="flex flex-col gap-[40px] items-center px-10 py-8">
+      {/* Title */}
+      <div className="flex flex-col gap-[5px] items-center">
+        <span className="text-[50px] font-bold text-blue-600">We-Meet</span>
+        <span className="text-[25px] text-center text-gray-700">
+          Speak, Create, Connect
+        </span>
       </div>
 
       {/* Signup form */}
-      <form onSubmit={handleClick} className='signup-box'>
-
-        {/* Username input */}
+      <form
+        onSubmit={handleClick}
+        className="flex flex-col items-center gap-[20px] bg-white mt-10 w-[370px] lg:w-[400px] h-[340px] lg:h-[400px] rounded-lg shadow-[0_7px_29px_1px_rgba(100,100,111,0.3)] px-3 py-10"
+      >
+        {/* Username */}
         <input
-          className='Email'
           required
           ref={username}
-          placeholder='Username'
+          placeholder="Username"
+          className="mb-5 w-[310px] lg:w-[340px] h-[45px] lg:h-[40px]rounded-md border-2 border-gray-400 px-3 focus:outline-none"
         />
 
-        {/* Email input */}
+        {/* Email */}
         <input
-          className='Email'
-          type='email'
+          type="email"
           required
           ref={email}
-          placeholder='Email'
+          placeholder="Email"
+          className="mb-5 w-[310px] lg:w-[340px] h-[45px] lg:h-[40px] rounded-md border-2 border-gray-400 px-3 focus:outline-none"
         />
 
-        {/* Password input */}
+        {/* Password */}
         <input
-          className='password'
-          type='password'
+          type="password"
           required
           ref={password}
           minLength="6"
-          placeholder='Password'
+          placeholder="Password"
+          className="mb-5 w-[310px] lg:w-[340px] h-[45px] lg:h-[40px] rounded-md border-2 border-gray-400 px-3 focus:outline-none"
         />
 
-        {/* Confirm password input */}
+        {/* Confirm password */}
         <input
-          className='password'
-          type='password'
+          type="password"
           required
           ref={passwordAgain}
           minLength="6"
-          placeholder='Re-enter Password'
+          placeholder="Re-enter Password"
+          className="w-[310px] lg:w-[340px] h-[45px] lg:h-[40px] rounded-md border-2 border-gray-400 px-3 focus:outline-none"
         />
 
-        {/* Sign up button */}
-        <button type='submit' className='button-Signup'>
+        {/* Signup button */}
+        <button
+          type="submit"
+          className="w-[310px] lg:w-[340px] h-[45px] lg:h-[40px] bg-blue-600 text-white rounded-lg text-[15px] hover:bg-blue-700 transition"
+        >
           Sign up
         </button>
 
-        {/* Navigate to login page */}
+        {/* Login button */}
         <button
-          type='button'
-          onClick={() => navigate('/login')}
-          className='button-Login'
+          type="button"
+          onClick={() => navigate("/login")}
+          className="w-[310px] lg:w-[340px] h-[45px] lg:h-[40px] bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
         >
           Log in to account
         </button>

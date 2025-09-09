@@ -38,7 +38,7 @@
 
 .email {
     margin-bottom: 15px;
-    width: 300px;
+    width: 310px;
     height: 40px;
     border-radius: 7px;
     border: 2px solid grey;
@@ -48,7 +48,7 @@
 .pwd {
     margin-bottom: 25px;
     margin-top: 10px;
-    width: 300px;
+    width: 310px;
     height: 40px;
     border-radius: 7px;
     border: 2px solid grey;
@@ -64,7 +64,7 @@
     color: white;
     font-size: 15px;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 5px;
 }
 
 .button-login {
