@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; 
 
 function Rightbar({ user }) {
-  const PF = import.meta.env.VITE_PUBLIC_FOLDER; // Public folder path (for profile images)
-  const [friends, setFriends] = useState([]); // State to store list of user's friends
-  const navigate = useNavigate(); // Hook to navigate programmatically
+  const PF = import.meta.env.VITE_PUBLIC_FOLDER; 
+  const [friends, setFriends] = useState([]); 
+  const navigate = useNavigate(); 
 
 
   // useEffect to fetch user's friends when component mounts or user ID changes

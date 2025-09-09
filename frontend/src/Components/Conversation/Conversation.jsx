@@ -54,44 +54,7 @@ function Conversation({ message, self, onReply }) {
         <>
             <div className={self ? (message.image ? "msg-recievedWithimage" : "msg-recieved") : (message.image ? "msg-sentWithimage" : "msg-sent")}>
 
-                <div className="convo-top">
-
-                    {/* {message.replyTo &&
-                        <div className="reply-preview">
-                            <div className="reply-content">
-                                <span className="reply-sender">
-                                    {message.replyTo.sender
-                                        ? (message.replyTo.sender._id === user._id ? "You" : message.replyTo.sender.username)
-                                        : "Unknown"}
-                                </span>
-
-                                {message.replyTo.image && (
-                                    <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                                        <div className="imageIcon"><Image /></div>
-                                        <span className="reply-text">Image</span>
-                                    </div>
-                                )}
-                                {message.replyTo.text && (
-                                    <div>
-                                        <span className="reply-text">{message.replyTo.text}</span>
-                                    </div>
-                                )}
-
-                                {message.replyTo.audio && (
-                                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                                        <div ><Mic style={{ width: "18px" }} /></div>
-                                        <span className="reply-text">Audio</span>
-                                    </div>
-                                )}
-                            </div>
-                            {message.replyTo.image &&
-                                <div>
-                                    <img style={{ minWidth: "40px", maxWidth: "50px", minHeight: "50px", maxHeight: "60px", marginLeft: "360px" }} src={PF + message.replyTo.image} />
-                                </div>
-                            }
-
-                        </div>
-                    } */}
+                <div className="convo-top">                    
 
                     {/* delete and reply message preview */}
                     {msgOptions.visible && msgOptions.messageId === message._id && (
