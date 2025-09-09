@@ -31,7 +31,7 @@ function Login() {
       {/* Login box */}
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-[20px] items-center bg-white pt-[40px] lg:pt-[60px] w-[370px] lg:w-[400px] h-[340px] lg:h-[400px] rounded-lg shadow-[0_7px_29px_1px_rgba(100,100,111,0.3)]"
+        className="flex flex-col gap-[20px] items-center bg-white pt-[40px] w-[370px] lg:w-[400px] h-[340px] lg:h-[350px] rounded-lg shadow-[0_7px_29px_1px_rgba(100,100,111,0.3)]"
       >
         {/* Email */}
         <input
