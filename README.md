@@ -40,7 +40,7 @@ It combines the features of a modern social platform with live communication too
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
 ```bash
 We-Meet/
@@ -58,57 +58,66 @@ We-Meet/
 │   └── index.js      # Socket.IO server
 │
 └── README.md         # Documentation
+```
 
+---
 
-
-**⚙️ Setup & Installation :**
+## ⚙️ Setup & Installation
 
 1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/parikz45/We-Meet.git
+   cd We-Meet
+   ```
 
-	git clone https://github.com/parikz45/We-Meet.git
-	cd We-Meet
 2. **Backend Setup (API):**
-	cd api
-	npm install
-
-	Create a .env file in api/ with:
-		PORT=5000
-		Mongo_Url=your_mongodb_connection_string
-
-	Run backend:
-		npm run dev   # for development
-		npm start     # for production
-
+   ```bash
+   cd api
+   npm install
+   ```
+   Create a `.env` file in `api/` with:
+   ```env
+   PORT=5000
+   Mongo_Url=your_mongodb_connection_string
+   ```
+   Run backend:
+   ```bash
+   npm run dev   # for development
+   npm start     # for production
+   ```
 
 3. **Frontend Setup:**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   By default, frontend runs on [http://localhost:5173](http://localhost:5173).
 
-	cd frontend
-	npm install
+4. **Socket Server Setup**
+   ```bash
+   cd socket
+   npm install
+   npm start
+   ```
 
-	Run frontend:
-		npm run dev
-	By default, frontend runs on http://localhost:5173.
+---
 
-4. Socket Server Setup
-
-	cd socket
-	npm install
-	npm start
-
-## Screenshots
+## 📸 Screenshots
 
 | Home Feed | Post Creation | Profile Page |
 |-----------|---------------|---------------|
-| ![Home Feed](frontend/src/assets/images/home-feed.png) | ![Post Creation](frontend/srcassets/images/post-creation.png) | ![Profile Page](frontend/srcassets/images/profile-page.png) |
+| ![Home Feed](frontend/src/assets/images/home-feed.png) | ![Post Creation](frontend/src/assets/images/post-creation.png) | ![Profile Page](frontend/src/assets/images/profile-page.png) |
 
 | Notifications | Chat | Settings |
 |---------------|------|----------|
-| ![Notifications](assets/images/notifications.png) | ![Chat](assets/images/chat.png) | ![Settings](assets/images/settings.png) |
+| ![Notifications](frontend/src/assets/images/notifications.png) | ![Chat](frontend/src/assets/images/chat.png) | ![Settings](frontend/src/assets/images/settings.png) |
 
-> **Note:** Save your screenshots in the `assets/images` folder with the above file names.
+> **Note:** Save your screenshots in `frontend/src/assets/images` with the above file names.
 
+---
 
-🔌 **API Endpoints :**
+## 🔌 API Endpoints
 
 | Method | Endpoint                | Description              |
 | ------ | ----------------------- | ------------------------ |
@@ -123,28 +132,36 @@ We-Meet/
 | POST   | `/api/upload`           | Upload an image          |
 | POST   | `/api/messages/audio`   | Upload & send audio msg  |
 
-⚡ **Real-time Events (Socket.IO) :**
+---
 
-- addUser(userId) → Adds user to active users list
-- getUsers → Broadcasts active users
-- sendMessage(message) → Send message to a receiver
-- getMessage → Receive message in real time
-- disconnect → Removes user from active list
+## ⚡ Real-time Events (Socket.IO)
 
-🚀 **Deployment :**
+- `addUser(userId)` → Adds user to active users list  
+- `getUsers` → Broadcasts active users  
+- `sendMessage(message)` → Send message to a receiver  
+- `getMessage` → Receive message in real time  
+- `disconnect` → Removes user from active list  
 
-- Frontend: Vercel / Netlify
-- Backend: Sevalla or AWS EC2
-- Socket Server: Can run on same backend or a separate Node server
+---
 
-🤝 **Contributing :**
+## 🚀 Deployment
 
-1. Fork the repo.
-2. Create your feature branch (git checkout -b feature/new-feature).
-3. Commit changes (git commit -m 'Add new feature').
-4. Push to branch (git push origin feature/new-feature).
-5. Create a Pull Request
+- Frontend: Vercel / Netlify  
+- Backend: Sevalla or AWS EC2  
+- Socket Server: Can run on same backend or a separate Node server  
 
-📜 **License **
+---
+
+## 🤝 Contributing
+
+1. Fork the repo.  
+2. Create your feature branch (`git checkout -b feature/new-feature`).  
+3. Commit changes (`git commit -m 'Add new feature'`).  
+4. Push to branch (`git push origin feature/new-feature`).  
+5. Create a Pull Request.  
+
+---
+
+## 📜 License
 
 This project is licensed under the MIT License.
