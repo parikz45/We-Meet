@@ -1,49 +1,48 @@
-WE-MEET
+# WE-MEET - Real-time Social Media Web Application
 
-We-Meet is a real-time social media web application that brings people together through posts, chat, and instant notifications. It combines the features of 
-a modern social platform with live communication tools, allowing users to:
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![React](https://img.shields.io/badge/React-19-blue)
+![Node.js](https://img.shields.io/badge/Node.js-18.x-green)
+![MongoDB](https://img.shields.io/badge/MongoDB-6.0-brightgreen)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-RealTime-lightgrey)
 
-- Create and share posts with text, images, and audio.
-- Connect with friends through personal profiles and activity feeds.
-- Chat in real time with support for both text and voice messages (powered by Socket.IO).
-- Receive instant notifications for messages, posts, and interactions.
-- Enjoy a responsive and intuitive interface built with React (Vite) + Material UI.
+We-Meet is a real-time social media web application that brings people together through posts, chat, and instant notifications.  
+It combines the features of a modern social platform with live communication tools, powered by **Socket.IO**, **Express.js**, **MongoDB**, and **React (Vite)**.
 
-The backend is powered by Express.js and MongoDB for secure, scalable data management, while Socket.IO enables seamless real-time communication.
+---
 
-✨ **Features** :
+## Features
+- 🔐 User authentication (signup, login, password reset)  
+- 👤 User profiles with posts and details  
+- 📰 Feed with posts and comments  
+- 💬 Real-time chat with text and audio messages (via Socket.IO)  
+- 🖼 Media upload (images, audio) with Multer  
+- 🔔 Notifications system  
+- 📱 Responsive UI built with React + MUI  
 
-- 🔐 User authentication (signup, login, password reset)
-- 👤 User profiles with posts and details
-- 💬 Real-time chat with text and audio messages (via Socket.IO)
-- 🖼 Media upload (images, audio) with Multer
-- 📰 Feed with posts and comments
-- 🔔 Notifications system
-- 📱 Responsive UI built with React + MUI 
+---
 
-🛠 **Tech Stack :**
+## Tech Stack
 
-**Frontend (Vite + React)**
+### Frontend (Vite + React)
+- ⚛️ React 19, React Router DOM  
+- 🎨 Material UI (MUI), Styled Components  
+- ⚡ Axios, Socket.IO Client  
 
-- React 19, React Router DOM
-- MUI (Material UI)
-- Styled Components
-- Socket.IO Client
-- Axios
+### Backend (Express + MongoDB)
+- 🚀 Express.js, Mongoose  
+- 📦 Multer (file uploads)  
+- 🛡 Helmet & CORS (security)  
+- 📜 Morgan (logging)  
 
-**Backend (Express + MongoDB)**
+### Real-time Communication
+- 🔌 Socket.IO  
 
--Express.js, Mongoose
--Multer (file uploads)
--Helmet & CORS (security)
--Morgan (logging)
+---
 
-**Real-time Communication**
+## Project Structure
 
-Socket.IO
-
-**📂 Project Structure**:
-
+```bash
 We-Meet/
 ├── api/              # Backend (Express + MongoDB)
 │   ├── index.js      # Server entry point
@@ -59,6 +58,7 @@ We-Meet/
 │   └── index.js      # Socket.IO server
 │
 └── README.md         # Documentation
+
 
 
 **⚙️ Setup & Installation :**
@@ -94,6 +94,19 @@ We-Meet/
 	cd socket
 	npm install
 	npm start
+
+## Screenshots
+
+| Home Feed | Post Creation | Profile Page |
+|-----------|---------------|---------------|
+| ![Home Feed](frontend/src/assets/images/home-feed.png) | ![Post Creation](frontend/srcassets/images/post-creation.png) | ![Profile Page](frontend/srcassets/images/profile-page.png) |
+
+| Notifications | Chat | Settings |
+|---------------|------|----------|
+| ![Notifications](assets/images/notifications.png) | ![Chat](assets/images/chat.png) | ![Settings](assets/images/settings.png) |
+
+> **Note:** Save your screenshots in the `assets/images` folder with the above file names.
+
 
 🔌 **API Endpoints :**
 
