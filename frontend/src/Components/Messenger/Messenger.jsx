@@ -217,8 +217,8 @@ function Messenger() {
         <div className='messenger'>
             <Navbar />
             <div className='messenger-body'>
-                {/* Friends list / Conversations */}
                 <div className='friends-list'>
+                    {/* sidebar */}
                     <div>
                         <div className="online">
                             <div className="search-container">

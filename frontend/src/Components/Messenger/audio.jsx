@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Mic, Stop, Save, Delete } from '@mui/icons-material';
 import axios from 'axios';
-import "./audio.css";
 
 const AudioRecorder = ({ sender, conversationId }) => {
     const [isRecording, setIsRecording] = useState(false);
@@ -78,7 +77,7 @@ const AudioRecorder = ({ sender, conversationId }) => {
                     <button type='button' onClick={discardRecording} style={{ color: "gray", cursor:"pointer" }}><Delete /> Discard</button>
                 </div>
             ) : (
-                <button type='button' className="mic-notrecording" onClick={startRecording}>
+                <button type='button' className="cursor-pointer bg-white border-none mr-[7px] " onClick={startRecording}>
                     <Mic /> Record
                 </button>
             )}

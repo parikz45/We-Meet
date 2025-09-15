@@ -1,5 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
-import './Share.css';
+import React, { useContext, useState } from 'react';
 import { PhotoLibrary, LocationOn, EmojiEmotionsOutlined, Label, Cancel } from "@mui/icons-material"
 import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
@@ -8,17 +7,15 @@ import EmojiPicker from "emoji-picker-react";
 function Share() {
   const PF = import.meta.env.VITE_PUBLIC_FOLDER;
   const { user } = useContext(AuthContext);
-  const [desc, setDesc] = useState(""); // Post description
-  const [file, setFile] = useState(null); // Selected image/video file
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // Toggle emoji picker
-  const [noContent, setNoContent] = useState(false); // Warning for empty post
+  const [desc, setDesc] = useState("");
+  const [file, setFile] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [noContent, setNoContent] = useState(false);
 
-  // Toggle emoji picker display
   const handleEmojiClick = () => {
     setShowEmojiPicker((prev) => !prev);
   };
 
-  // Create a new post
   const submitHandler = async (e) => {
     e.preventDefault();
 
@@ -53,7 +50,6 @@ function Share() {
     }
   };
 
-  // Share current location via Google Maps link
   const handleLocation = () => {
     if (!navigator.geolocation) {
       alert("Browser does not support geolocation");
@@ -75,81 +71,82 @@ function Share() {
   };
 
   return (
-    <div className='sharebox'>
-      <div className='profile'>
+    <div className="p-6 mt-6 max-w-2xl mx-auto rounded-3xl shadow-2xl bg-white transition-all duration-300">
+      {/* Profile + input */}
+      <div className="flex items-center gap-4 border-b border-gray-200 pb-4">
         <img
-          className='profile-imge'
+          className="w-14 h-14 rounded-full object-cover border-2 border-transparent"
           src={user.profilePicture ? PF + user.profilePicture : PF + "profile.jpg"}
+          alt="User Profile"
         />
         <input
-          className='share-input'
+          className="flex-1 text-gray-800 outline-none placeholder-gray-400 text-base"
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
-          placeholder={'What is in your mind ' + user.username + "?"}
+          placeholder={`What’s on your mind, ${user.username}?`}
         />
       </div>
 
-      <hr />
-
-      {/* Preview selected image */}
+      {/* Image preview */}
       {file && (
-        <div className="shareImg-container">
-          <img className="shareImg" src={URL.createObjectURL(file)} />
-          <Cancel className="cancel-button" onClick={() => setFile(null)} />
+        <div className="relative my-6">
+          <img className="w-full h-auto max-h-96 rounded-2xl object-cover shadow-inner" src={URL.createObjectURL(file)} alt="Preview" />
+          <Cancel
+            className="absolute top-4 right-4 cursor-pointer text-white bg-black/50 rounded-full text-3xl p-1 hover:bg-red-500 transition-colors"
+            onClick={() => setFile(null)}
+          />
         </div>
       )}
 
-      <form className='share-options' onSubmit={submitHandler}>
-        {/* File input */}
-        <label htmlFor='file' className='share-buttons'>
-          <PhotoLibrary style={{ color: "red" }} />
-          <span className='button-name'>Photo or video</span>
-          <input
-            style={{ display: "none" }}
-            id="file"
-            type="file"
-            accept='.png,.jpeg,.jpg'
-            onChange={(e) => {
-              setFile(e.target.files[0]);
-            }}
-          />
-        </label>
+      {/* Share options */}
+      <form className="flex flex-col sm:flex-row items-center gap-7 pt-3" onSubmit={submitHandler}>
+        <div className="flex items-center gap-2 flex-wrap mb-4 sm:mb-0">
+          {/* File input */}
+          <label htmlFor="file" className="flex items-center gap-2 text-sm lg:text-base cursor-pointer px-4 py-2 rounded-full hover:bg-red-50 transition-colors">
+            <PhotoLibrary className="text-red-500" />
+            <span className="text-gray-600 font-medium">Photo/Video</span>
+            <input
+              id="file"
+              type="file"
+              accept=".png,.jpeg,.jpg"
+              onChange={(e) => setFile(e.target.files[0])}
+              className="hidden"
+            />
+          </label>
 
-        {/* Tag button (placeholder only) */}
-        <div className='share-buttons'>
-          <Label style={{ color: "blue" }} />
-          <span className='button-name'>Tag</span>
+          {/* Location */}
+          <div onClick={handleLocation} className="flex items-center gap-2 text-sm lg:text-base text-gray-600 cursor-pointer px-4 py-2 rounded-full hover:bg-green-50 transition-colors">
+            <LocationOn className="text-green-500" />
+            <span className="font-medium">Location</span>
+          </div>
+
+          {/* Emoji */}
+          <div onClick={handleEmojiClick} className="flex items-center gap-2 text-sm lg:text-base text-gray-600 cursor-pointer px-4 py-2 rounded-full hover:bg-yellow-50 transition-colors">
+            <EmojiEmotionsOutlined className="text-yellow-500" />
+            <span className="font-medium">Emoji</span>
+          </div>
         </div>
 
-        {/* Add current location */}
-        <div onClick={handleLocation} className='share-buttons'>
-          <LocationOn style={{ color: "green" }} />
-          <span className='button-name'>Location</span>
-        </div>
-
-        {/* Toggle emoji picker */}
-        <div onClick={handleEmojiClick} className='share-buttons'>
-          <EmojiEmotionsOutlined style={{ color: "gray" }} />
-          <span className='button-name'>Emoji</span>
-        </div>
-
-        {/* Submit post */}
-        <button type="submit" className='share-button'>Share</button>
+        {/* Share button */}
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-blue-700 transition-colors w-full sm:w-auto"
+        >
+          Share
+        </button>
       </form>
 
-      {/* Emoji picker UI */}
+      {/* Emoji picker */}
       {showEmojiPicker && (
-        <div className="emojipicker">
+        <div className="mt-4 flex justify-center">
           <EmojiPicker onEmojiClick={(e) => setDesc(prev => prev + e.emoji)} />
         </div>
       )}
 
       {/* Warning for empty post */}
       {noContent && (
-        <div className='noPost'>
-          <span style={{ color: "gray", fontSize: "14px" }}>
-            Enter something to post
-          </span>
+        <div className="mt-4 text-center text-sm font-medium text-red-500 bg-red-50 px-4 py-2 rounded-lg">
+          Enter something to post
         </div>
       )}
     </div>

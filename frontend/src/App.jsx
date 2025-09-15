@@ -15,12 +15,14 @@ import Notfound from './Components/Notfound/Notfound';
 import ForgotPassword from './Components/ForgotPassword/ForgotPassword';
 
 function Home() {
-  const {user}=useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  const isMobile = window.innerWidth <= 768;
+
   return (
     <div>
       <Navbar />
-      <div className='home-container'>
-        <Sidebar />
+      <div className="flex gap-4 mt-4 px-2">
+        {!isMobile && <Sidebar />}
         <Feed />
         <Rightbar user={user} />
       </div>
@@ -29,18 +31,18 @@ function Home() {
   )
 }
 function App() {
-  const {user}=useContext(AuthContext)
+  const { user } = useContext(AuthContext)
   return (
     <Router>
       <Routes>
-        < Route path='/' element={user ? <Home /> : <Login/> }></Route>
+        < Route path='/' element={user ? <Home /> : <Login />}></Route>
         <Route path='/login' element={user ? <Navigate to="/" /> : <Login />} ></Route>
         <Route path='/signup' element={user ? <Navigate to="/" /> : <Signup />} ></Route>
-        <Route path='/profile/:username' element={user? <Profile/>:<Login/>}></Route>
-        <Route path='/chat' element={user? <Messenger/>:<Login/>}></Route>
-        <Route path='/details' element={<Details/>}></Route>
-        <Route path='/resetPassword' element={<ForgotPassword/>}></Route>
-        <Route path='*' element={<Notfound/>}></Route>
+        <Route path='/profile/:username' element={user ? <Profile /> : <Login />}></Route>
+        <Route path='/chat' element={user ? <Messenger /> : <Login />}></Route>
+        <Route path='/details' element={<Details />}></Route>
+        <Route path='/resetPassword' element={<ForgotPassword />}></Route>
+        <Route path='*' element={<Notfound />}></Route>
       </Routes>
     </Router>
   )

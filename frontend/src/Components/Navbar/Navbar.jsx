@@ -305,20 +305,20 @@ function Navbar() {
 
       {/* Logout Confirm */}
       {checkLogout && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
-            <span className="font-semibold text-lg block mb-4">
-              Are you sure you want to Log out?
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl gap-[20px] flex flex-col p-10 shadow-2xl w-100 text-center">
+            <span className="font-semibold text-xl text-gray-700">
+              Are you sure you want to log out?
             </span>
             <div className="flex justify-center gap-4">
               <button
-                className="bg-gray-500 text-white px-4 py-2 rounded"
+                className="bg-gray-200 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-300 transition"
                 onClick={() => setCheckLogout(false)}
-              >
+              >  
                 Cancel
               </button>
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 shadow-sm transition"
                 onClick={Logout}
               >
                 Log out
@@ -328,14 +328,15 @@ function Navbar() {
         </div>
       )}
 
+
       {/* Remove DP Confirm */}
       {checkRemoveDp && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
-            <span className="font-semibold text-lg block mb-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col gap-[25px] text-center">
+            <span className="font-semibold text-xl text-gray-700">
               Are you sure you want to remove your profile picture?
             </span>
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-[30px] ">
               <button
                 className="bg-gray-500 text-white px-4 py-2 rounded"
                 onClick={() => setCheckRemoveDp(false)}
