@@ -24,7 +24,7 @@ function Home() {
       <div className="flex gap-4 mt-4 px-2">
         {!isMobile && <Sidebar />}
         <Feed />
-        <Rightbar user={user} />
+        {!isMobile && <Rightbar user={user} />}
       </div>
 
     </div>

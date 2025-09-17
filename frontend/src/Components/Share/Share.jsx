@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { PhotoLibrary, LocationOn, EmojiEmotionsOutlined, Label, Cancel } from "@mui/icons-material"
+import { PhotoLibrary, LocationOn, EmojiEmotionsOutlined, Cancel } from "@mui/icons-material"
 import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
 import EmojiPicker from "emoji-picker-react";
@@ -73,9 +73,9 @@ function Share() {
   return (
     <div className="p-6 mt-6 max-w-2xl mx-auto rounded-3xl shadow-2xl bg-white transition-all duration-300">
       {/* Profile + input */}
-      <div className="flex items-center gap-4 border-b border-gray-200 pb-4">
+      <div className="flex items-center gap-2 lg:gap-4 border-b border-gray-200 pb-4">
         <img
-          className="w-14 h-14 rounded-full object-cover border-2 border-transparent"
+          className="w-12 h-12 lg:w-14 lg:h-14 rounded-full object-cover border-2 border-transparent"
           src={user.profilePicture ? PF + user.profilePicture : PF + "profile.jpg"}
           alt="User Profile"
         />
@@ -83,7 +83,7 @@ function Share() {
           className="flex-1 text-gray-800 outline-none placeholder-gray-400 text-base"
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
-          placeholder={`What’s on your mind, ${user.username}?`}
+          placeholder={`What's on your mind, ${user.username}?`}
         />
       </div>
 
@@ -99,8 +99,8 @@ function Share() {
       )}
 
       {/* Share options */}
-      <form className="flex flex-col sm:flex-row items-center gap-7 pt-3" onSubmit={submitHandler}>
-        <div className="flex items-center gap-2 flex-wrap mb-4 sm:mb-0">
+      <form className="flex flex-col sm:flex-row gap-4 sm:gap-7 pt-3" onSubmit={submitHandler}>
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-2 flex-wrap mb-4 sm:mb-0">
           {/* File input */}
           <label htmlFor="file" className="flex items-center gap-2 text-sm lg:text-base cursor-pointer px-4 py-2 rounded-full hover:bg-red-50 transition-colors">
             <PhotoLibrary className="text-red-500" />
@@ -138,7 +138,7 @@ function Share() {
 
       {/* Emoji picker */}
       {showEmojiPicker && (
-        <div className="mt-4 flex justify-center">
+        <div className="mt-4 flex lg:justify-center">
           <EmojiPicker onEmojiClick={(e) => setDesc(prev => prev + e.emoji)} />
         </div>
       )}

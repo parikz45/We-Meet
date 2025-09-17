@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import "./Feed.css";
 import Share from "../Share/Share";
 import Post from "../Post/Post";
 import axios from "axios";
@@ -39,8 +38,8 @@ function Feed({ username }) {
 
 
   return (
-    <div className="feed">
-      <div className="feed-wrapper">
+    <div className="pt-5 flex-5">
+      <div className="flex flex-col gap-10 ">
         {(!username || user.username===username) && <Share />}
         {posts.map((p) => (
           <Post key={p._id} post={p} />
