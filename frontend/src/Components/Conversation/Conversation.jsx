@@ -147,7 +147,6 @@ function Conversation({ message, self, onReply }) {
                 </div>
             }
 
-
         </>
     );
 }
