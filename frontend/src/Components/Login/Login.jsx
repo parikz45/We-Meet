@@ -19,77 +19,95 @@ function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-[40px] bg-gray-50 pt-10 min-h-screen">
-      {/* Title and tagline */}
-      <div className="flex flex-col gap-[5px] items-center">
-        <span className="text-[50px] font-bold text-blue-600">Social Media</span>
-        <span className="text-[25px] text-center text-gray-700">
-          Speak, Create, Connect
-        </span>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)] p-8">
 
-      {/* Login box */}
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-[20px] items-center bg-white pt-[40px] w-[370px] lg:w-[400px] h-[340px] lg:h-[350px] rounded-lg shadow-[0_7px_29px_1px_rgba(100,100,111,0.3)]"
-      >
-        {/* Email */}
-        <input
-          type="email"
-          required
-          ref={email}
-          placeholder="Email"
-          className="w-[310px] lg:w-[340px] h-[45px] lg:h-[40px] rounded-md border-2 border-gray-400 px-3 focus:outline-none"
-        />
+        {/* Brand */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-extrabold text-blue-600 tracking-tight">
+            Social Media
+          </h1>
+          <p className="mt-2 text-gray-600 text-sm">
+            Speak. Create. Connect.
+          </p>
+        </div>
 
-        {/* Password */}
-        <input
-          type="password"
-          required
-          ref={password}
-          minLength="6"
-          placeholder="Password"
-          className="w-[310px] lg:w-[340px] h-[45px] lg:h-[40px] rounded-md border-2 border-gray-400 px-3 focus:outline-none"
-        />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
-        {/* Login button */}
-        <button
-          type="submit"
-          className="w-[310px] lg:w-[340px] h-[45px] lg:h-[40px] bg-blue-600 text-white rounded-lg text-[15px] cursor-pointer mt-[5px] hover:bg-blue-700 transition"
-        >
-          {isFetching ? (
-            <CircularProgress color="inherit" size="20px" />
-          ) : (
-            "Log In"
-          )}
-        </button>
-
-        {/* Create account button */}
-        <button
-          type="button"
-          onClick={() => navigate("/signup")}
-          className="w-[310px] lg:w-[340px] h-[45px] lg:h-[40px] bg-green-600 text-white rounded-lg cursor-pointer hover:bg-green-700 transition"
-        >
-          Create a new account
-        </button>
-
-        {/* Forgot password */}
-        <Link
-          to="/resetPassword"
-          className="mt-[20px] text-blue-600 hover:underline"
-        >
-          Forgot password?
-        </Link>
-
-        {/* Error */}
-        {error && (
-          <div className="mt-[25px] text-red-500">
-            <span>Wrong username/password</span>
+          {/* Email */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-600">Email address</label>
+            <input
+              type="email"
+              required
+              ref={email}
+              placeholder="you@example.com"
+              className="h-11 rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
           </div>
-        )}
-      </form>
+
+          {/* Password */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-600">Password</label>
+            <input
+              type="password"
+              required
+              ref={password}
+              minLength="6"
+              placeholder="••••••••"
+              className="h-11 rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="text-sm text-red-500 text-center mt-2">
+              Wrong email or password
+            </div>
+          )}
+
+          {/* Login */}
+          <button
+            type="submit"
+            disabled={isFetching}
+            className="mt-4 h-11 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-60"
+          >
+            {isFetching ? (
+              <CircularProgress color="inherit" size="20px" />
+            ) : (
+              "Log In"
+            )}
+          </button>
+
+          {/* Forgot password */}
+          <Link
+            to="/resetPassword"
+            className="text-sm text-blue-600 text-center hover:underline mt-2"
+          >
+            Forgot password?
+          </Link>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3 my-4">
+            <div className="flex-1 h-px bg-gray-300" />
+            <span className="text-xs text-gray-500">OR</span>
+            <div className="flex-1 h-px bg-gray-300" />
+          </div>
+
+          {/* Sign up */}
+          <button
+            type="button"
+            onClick={() => navigate("/signup")}
+            className="h-11 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition"
+          >
+            Create a new account
+          </button>
+        </form>
+      </div>
     </div>
   );
+
 }
 
 export default Login;

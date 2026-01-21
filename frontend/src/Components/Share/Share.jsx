@@ -34,7 +34,7 @@ function Share() {
       data.append("file", file);
 
       try {
-        const res = await axios.post("https://we-meet-mecf4.sevalla.app/api/upload", data);
+        const res = await axios.post("http://localhost:8800/api/upload", data);
         newPost.img = res.data.filename;
         setNoContent(false);
       } catch (err) {
@@ -43,7 +43,7 @@ function Share() {
     }
 
     try {
-      await axios.post("https://we-meet-mecf4.sevalla.app/api/posts", newPost);
+      await axios.post("http://localhost:8800/api/posts", newPost);
       window.location.reload();
     } catch (err) {
       console.log(err);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Rightbar.css'; 
-import { Campaign } from "@mui/icons-material"; 
+import { Campaign, Message } from "@mui/icons-material"; // Added Message icon
 import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios'; 
 
@@ -8,7 +8,7 @@ function Rightbar({ user }) {
   const PF = import.meta.env.VITE_PUBLIC_FOLDER; 
   const [friends, setFriends] = useState([]); 
   const navigate = useNavigate(); 
-
+  
 
   // useEffect to fetch user's friends when component mounts or user ID changes
   useEffect(() => {
@@ -16,7 +16,7 @@ function Rightbar({ user }) {
       if (!user._id) return; 
       try {
         // Fetch the friend list using user's ID
-        const friendList = await axios.get(`https://we-meet-mecf4.sevalla.app/api/users/friends/${user._id}`);
+        const friendList = await axios.get(`http://localhost:8800/api/users/friends/${user._id}`);
         setFriends(friendList.data);
       } catch (err) {
         console.error("Error fetching friends:", err.response?.data || err.message);
@@ -25,47 +25,94 @@ function Rightbar({ user }) {
     getFriends(); 
   }, [user._id]); 
 
+  const handleStartChat = (friendId) => {
+    console.log(`Starting chat with friend ID: ${friendId}`);
+   
+    alert("Chat function trigger for this friend!");
+  };
+
   return (
-    <div className='rightbar'>
+    <div className='flex flex-col p-4 gap-6 sticky top-20 right-0 w-125 mt-2 h-fit'>
       
-      {/* Top section containing the ad/campaign icon */}
-      <div className='right-top'>
-        <Campaign />
-        <span className='birthday'>Ad</span>
+      {/* ========================================
+        1. AD WIDGET (Compact and focused)
+        ========================================
+      */}
+      <div className='flex flex-col gap-3 bg-white p-4 rounded-xl items-center justify-center shadow-sm border border-gray-100'>
+        <div className='flex items-center text-sm text-gray-500 mb-3'>
+          <Campaign className='!text-lg mr-1' />
+          <span>Advertisement</span>
+        </div>
+
+        {/* Ad Image - Sized for a rightbar widget (smaller width) */}
+        <img 
+          className='rounded-lg w-[90%]  h-auto object-cover cursor-pointer' 
+          src='assets/ad.png' 
+          alt='Advertisement' 
+        />
+        <p className='text-xs text-gray-600 mt-2'>
+          *A brief, compelling ad text goes here.*
+        </p>
       </div>
 
-      {/* Advertisement image */}
-      <div>
-        <img className='right-img' src='assets/ad.png' />
-      </div>
+      <hr className='border-t border-gray-200' />
 
-      {/* Bottom section: List of online friends */}
-      <div className='right-bottom'>
-        <span className='bottom-head'>Online friends</span>
-
+      {/* ========================================
+        2. ONLINE FRIENDS WIDGET (Actionable)
+        ========================================
+      */}
+      <div className='flex flex-col gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100'>
+        <h3 className='text-lg font-semibold text-gray-700 mb-4'>Online Friends</h3>
+        
         {/* Container for friend cards */}
-        <div className='user-pics'>
-          {Array.isArray(friends) && friends.map((friend) => (
-            <div className='row1' key={friend._id}>
+        <div className='flex flex-col gap-3'>
+          {Array.isArray(friends) && friends.length > 0 ? (
+            friends.map((friend) => (
+              <div 
+                key={friend._id} 
+                className='flex items-center justify-between hover:bg-gray-50 p-2 rounded-lg transition-colors'
+              >
+                
+                {/* Profile Link Area */}
+                <div 
+                  onClick={() => navigate("/profile/" + friend.username)} 
+                  className='flex items-center gap-3 flex-grow cursor-pointer'
+                >
+                  
+                  {/* Profile Picture (with a fake online badge for visual) */}
+                  <div className='relative'>
+                    <img
+                      className='w-10 h-10 rounded-full object-cover'
+                      src={friend.profilePicture ? PF + friend.profilePicture : PF + '1.jpeg'}
+                      alt={friend.username}
+                    />
+                    {/* Placeholder for an online dot */}
+                    <span className='absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white'></span>
+                  </div>
 
-              {/* Navigate to friend's profile when clicked */}
-              <div onClick={() => navigate("/profile/" + friend.username)} className='set'>
+                  {/* Username */}
+                  <span className='text-sm font-medium text-gray-800 truncate'>
+                    {friend.username}
+                  </span>
+                </div>
 
-                {/* Display profile picture */}
-                <img
-                  className='friend-image'
-                  src={friend.profilePicture ? PF + friend.profilePicture : PF + '1.jpeg'}
-                />
-
-                {/* Display friend's username */}
-                <span className='friend-name'>{friend.username}</span>
+                {/* Quick Chat Button */}
+                <button 
+                  onClick={() => handleStartChat(friend._id)}
+                  className='p-1 ml-2 text-blue-500 hover:text-blue-700 rounded-full hover:bg-blue-100 transition-colors'
+                  title={`Message ${friend.username}`}
+                >
+                  <Message className='!text-xl' />
+                </button>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+             <p className='text-sm text-gray-500'>No friends online (or no friends added).</p>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-export default Rightbar; 
+export default Rightbar;

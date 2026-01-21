@@ -19,7 +19,7 @@ function Conversation({ message, self, onReply }) {
     useEffect(() => {
         const getData = async () => {
             try {
-                const res = await axios.get(`https://we-meet-mecf4.sevalla.app/api/users?userId=${message.sender}`);
+                const res = await axios.get(`http://localhost:8800/api/users?userId=${message.sender}`);
                 setSenderData(res.data);
             } catch (err) {
                 console.log(err);
@@ -41,7 +41,7 @@ function Conversation({ message, self, onReply }) {
     // delete a message
     const deleteSelectedMsg = async () => {
         try {
-            await axios.delete(`https://we-meet-mecf4.sevalla.app/api/messages/${message._id}`, {
+            await axios.delete(`http://localhost:8800/api/messages/${message._id}`, {
                 data: { userId: user._id }
             });
             setDeletemsg(false);
@@ -116,7 +116,7 @@ function Conversation({ message, self, onReply }) {
                             {message.audio && (
                                 <div className="audio-wrapper">
                                     <audio controls className="audio-player">
-                                        <source src={"https://we-meet-mecf4.sevalla.app/api/messages/audio/" + message.audio} type="audio/webm" />
+                                        <source src={"http://localhost:8800/api/messages/audio/" + message.audio} type="audio/webm" />
                                         Your browser does not support the audio tag.
                                     </audio>
                                 </div>

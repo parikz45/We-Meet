@@ -49,7 +49,7 @@ const AudioRecorder = ({ sender, conversationId }) => {
         formData.append("conversationId", conversationId);
 
         try {
-            await axios.post("https://we-meet-mecf4.sevalla.app/api/messages/audio", formData);
+            await axios.post("http://localhost:8800/api/messages/audio", formData);
             console.log("Audio uploaded");
             setRecordedBlob(null); 
         } catch (err) {

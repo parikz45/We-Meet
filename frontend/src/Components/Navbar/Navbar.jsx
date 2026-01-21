@@ -49,7 +49,7 @@ function Navbar() {
     const findAllUsers = async () => {
       try {
         const res = await axios.get(
-          "https://we-meet-mecf4.sevalla.app/api/users/all"
+          "http://localhost:8800/api/users/all"
         );
         setAllUsers(res.data);
       } catch (err) {
@@ -70,7 +70,7 @@ function Navbar() {
     try {
       const updatedUser = { ...user, profilePicture: "" };
       await axios.put(
-        `https://we-meet-mecf4.sevalla.app/api/users/${user._id}`,
+        `http://localhost:8800/api/users/${user._id}`,
         {
           userId: user._id,
           profilePicture: "",
