@@ -16,7 +16,7 @@ function Rightbar({ user }) {
       if (!user._id) return; 
       try {
         // Fetch the friend list using user's ID
-        const friendList = await axios.get(`http://localhost:8800/api/users/friends/${user._id}`);
+        const friendList = await axios.get(`https://we-meet-1-h00i.onrender.com/api/users/friends/${user._id}`);
         setFriends(friendList.data);
       } catch (err) {
         console.error("Error fetching friends:", err.response?.data || err.message);

@@ -49,7 +49,7 @@ function Navbar() {
     const findAllUsers = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8800/api/users/all"
+          "https://we-meet-1-h00i.onrender.com/api/users/all"
         );
         setAllUsers(res.data);
       } catch (err) {
@@ -70,7 +70,7 @@ function Navbar() {
     try {
       const updatedUser = { ...user, profilePicture: "" };
       await axios.put(
-        `http://localhost:8800/api/users/${user._id}`,
+        `https://we-meet-1-h00i.onrender.com/api/users/${user._id}`,
         {
           userId: user._id,
           profilePicture: "",

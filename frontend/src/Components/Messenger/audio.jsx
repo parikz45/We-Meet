@@ -49,7 +49,7 @@ const AudioRecorder = ({ sender, conversationId }) => {
         formData.append("conversationId", conversationId);
 
         try {
-            await axios.post("http://localhost:8800/api/messages/audio", formData);
+            await axios.post("https://we-meet-1-h00i.onrender.com/api/messages/audio", formData);
             console.log("Audio uploaded");
             setRecordedBlob(null); 
         } catch (err) {

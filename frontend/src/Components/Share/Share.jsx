@@ -34,7 +34,7 @@ function Share() {
       data.append("file", file);
 
       try {
-        const res = await axios.post("http://localhost:8800/api/upload", data);
+        const res = await axios.post("https://we-meet-1-h00i.onrender.com/api/upload", data);
         newPost.img = res.data.filename;
         setNoContent(false);
       } catch (err) {
@@ -43,7 +43,7 @@ function Share() {
     }
 
     try {
-      await axios.post("http://localhost:8800/api/posts", newPost);
+      await axios.post("https://we-meet-1-h00i.onrender.com/api/posts", newPost);
       window.location.reload();
     } catch (err) {
       console.log(err);

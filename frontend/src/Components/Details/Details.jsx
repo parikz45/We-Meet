@@ -12,7 +12,7 @@ function Details() {
   // submitting user details
   const handleSubmit = async () => {
     try {
-      await axios.put(`http://localhost:8800/api/users/${User._id}`, {
+      await axios.put(`https://we-meet-1-h00i.onrender.com/api/users/${User._id}`, {
         userId: User._id,
         state: currentState || User.state || "",
         city: city || User.city || "",

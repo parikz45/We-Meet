@@ -20,7 +20,7 @@ function ProfileRight({ user }) {
     const getFriends = async () => {
       if (!user._id) return; 
       try {
-        const friendList = await axios.get(`http://localhost:8800/api/users/friends/${user._id}`);
+        const friendList = await axios.get(`https://we-meet-1-h00i.onrender.com/api/users/friends/${user._id}`);
         setFriends(friendList.data);  
       } catch (err) {
         console.error("Error fetching friends:", err.response?.data || err.message);
@@ -34,13 +34,13 @@ function ProfileRight({ user }) {
     try {
       if (following) {
         // Unfollow user
-        await axios.put(`http://localhost:8800/api/users/${user._id}/unfollow`, {
+        await axios.put(`https://we-meet-1-h00i.onrender.com/api/users/${user._id}/unfollow`, {
           userId: currentUser._id,
         });
         dispatch({ type: "UNFOLLOW", payload: user._id });
       } else {
         // Follow user
-        await axios.put(`http://localhost:8800/api/users/${user._id}/follow`, {
+        await axios.put(`https://we-meet-1-h00i.onrender.com/api/users/${user._id}/follow`, {
           userId: currentUser._id,
         });
         dispatch({ type: "FOLLOW", payload: user._id });

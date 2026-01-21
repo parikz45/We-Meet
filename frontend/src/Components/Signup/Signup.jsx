@@ -25,7 +25,7 @@ function Signup() {
 
       try {
         const res = await axios.post(
-          "http://localhost:8800/api/auth/register",
+          "https://we-meet-1-h00i.onrender.com/api/auth/register",
           user
         );
         localStorage.setItem("user", JSON.stringify(res.data));
