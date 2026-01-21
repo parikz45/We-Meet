@@ -11,24 +11,23 @@ import AudioRecorder from './audio';
 
 function Messenger() {
     const { user } = useContext(AuthContext);
-    const [conversations, setConversations] = useState([]);           // all conversations
-    const [messages, setMessages] = useState([]);                     // all messages in current conversation
-    const [currentChat, setCurrentChat] = useState(null);            // selected conversation
-    const [newMessage, setNewMessage] = useState("");                // new message input
-    const scrollRef = useRef();                                      // for auto-scroll to last message
-    const [friends, setFriends] = useState([]);                      // all friends of user
-    const [searchfriends, setSearchfriends] = useState([]);          // filtered friends from search
-    const [searchquery, setSearchquery] = useState("");              // friend search query
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);   // toggle emoji picker
-    const [file, setFile] = useState(null);                          // image to send
-    const [sendAudio, setSendAudio] = useState(false);               // unused but can toggle audio UI
-    const [replyMessage, setReplyMessage] = useState(null);          // message being replied to
-    const [replySender, setReplySender] = useState("");              // sender of the reply message
-    const [arrivalMessage, setArrivalMessage] = useState(null);      // message received in real-time via socket
-    const emojiPickerRef = useRef();                                 // emoji picker popup
-    const emojiIconRef = useRef();                                   // emoji icon trigger
-    const socket = useRef();                                         // socket reference
-    const PF = import.meta.env.VITE_PUBLIC_FOLDER;                   // public folder path
+    const [conversations, setConversations] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const [currentChat, setCurrentChat] = useState(null);
+    const [newMessage, setNewMessage] = useState("");
+    const scrollRef = useRef();
+    const [friends, setFriends] = useState([]);
+    const [searchfriends, setSearchfriends] = useState([]);
+    const [searchquery, setSearchquery] = useState("");
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [file, setFile] = useState(null);
+    const [replyMessage, setReplyMessage] = useState(null);
+    const [replySender, setReplySender] = useState("");
+    const [arrivalMessage, setArrivalMessage] = useState(null);
+    const emojiPickerRef = useRef();
+    const emojiIconRef = useRef();
+    const socket = useRef();
+    const PF = import.meta.env.VITE_PUBLIC_FOLDER;
 
     // fetching sender of a message being replied to
     useEffect(() => {
@@ -217,8 +216,10 @@ function Messenger() {
             <Navbar />
             <div className="flex flex-1 overflow-hidden">
                 {/* Friends list */}
-                <div className="hidden md:flex md:flex-col w-72 border-r border-gray-300 p-4 bg-gray-50">
-                    <div className="mb-2">
+                <div className="hidden md:flex md:flex-col w-72 bg-gradient-to-b from-white to-gray-50 border-r border-gray-200">
+
+                    {/* Search */}
+                    <div className="p-4">
                         <div className="relative">
                             <input
                                 value={searchquery}
@@ -227,45 +228,83 @@ function Messenger() {
                                     setSearchquery(val);
                                     findFriends(val);
                                 }}
-                                className="w-full rounded-md bg-gray-200 p-2 pr-8 text-gray-700 focus:outline-none"
-                                placeholder="Search for friends"
+                                placeholder="Search friends"
+                                className="w-full rounded-xl bg-white px-4 py-2.5 text-sm text-gray-700 
+                   shadow-sm border border-gray-200
+                   focus:outline-none focus:ring-2 focus:ring-blue-400"
                             />
+
                             {searchquery && (
                                 <Close
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 
+                     cursor-pointer text-gray-400 hover:text-gray-600"
                                     onClick={() => setSearchquery("")}
                                 />
                             )}
                         </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto">
+
+                    {/* Divider */}
+                    <div className="h-px bg-gray-200 mx-4 mb-2" />
+
+                    {/* List */}
+                    <div className="flex-1 overflow-y-auto px-2 space-y-1">
                         {searchquery ? (
                             searchfriends.length > 0 ? (
                                 searchfriends.map((friend) => (
                                     <div
                                         key={friend._id}
                                         onClick={() => handleFriendClick(friend)}
-                                        className="flex items-center gap-4 p-4 rounded-md cursor-pointer"
+                                        className="group flex items-center gap-3 px-3 py-3 rounded-xl cursor-pointer
+                       hover:bg-white hover:shadow-sm transition-all duration-150"
                                     >
-                                        <img
-                                            className="w-10 h-10 rounded-full object-cover"
-                                            src={friend.profilePicture ? PF + friend.profilePicture : PF + '1.jpeg'}
-                                        />
-                                        <span className="font-medium text-gray-700">{friend.username}</span>
+                                        {/* Avatar */}
+                                        <div className="relative">
+                                            <img
+                                                src={
+                                                    friend.profilePicture
+                                                        ? PF + friend.profilePicture
+                                                        : PF + "1.jpeg"
+                                                }
+                                                className="w-10 h-10 rounded-full object-cover ring-2 ring-transparent
+                           group-hover:ring-blue-400 transition"
+                                                alt=""
+                                            />
+                                        </div>
+
+                                        {/* Text */}
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-semibold text-gray-800 tracking-tight">
+                                                {friend.username}
+                                            </span>
+
+                                            <span className="text-xs text-gray-400 opacity-0 
+                               group-hover:opacity-100 transition">
+                                                Click to chat
+                                            </span>
+                                        </div>
                                     </div>
                                 ))
                             ) : (
-                                <div className="text-sm text-gray-500 mt-2">No results found</div>
+                                <div className="flex items-center justify-center h-full text-sm text-gray-400">
+                                    No users found
+                                </div>
                             )
                         ) : (
                             conversations.map((c) => (
-                                <div key={c._id} onClick={() => setCurrentChat(c)}>
+                                <div
+                                    key={c._id}
+                                    onClick={() => setCurrentChat(c)}
+                                    className="rounded-xl hover:bg-white hover:shadow-sm transition-all"
+                                >
                                     <Online conversation={c} currentUser={user} />
                                 </div>
                             ))
                         )}
                     </div>
                 </div>
+
+
 
                 {/* Chat section */}
                 <div className="flex flex-col flex-1">
@@ -288,84 +327,118 @@ function Messenger() {
                             </div>
 
                             {/* Input area */}
-                            <form className="flex items-end p-3 border-t border-gray-200 bg-white">
-                                <AudioRecorder sender={user._id} conversationId={currentChat._id} />
+                            <form className="border-t border-gray-200 bg-white px-4 py-3">
+                                {/* Reply Preview */}
+                                {replyMessage && (
+                                    <div className="mb-2 flex items-center justify-between rounded-lg bg-blue-50 px-3 py-2 border-l-4 border-blue-400">
+                                        <div className="min-w-0">
+                                            <div className="text-xs font-semibold text-blue-600">
+                                                {replySender === user.username ? "You" : replySender}
+                                            </div>
+                                            <div className="text-xs text-gray-600 truncate">
+                                                {replyMessage.text || "Media"}
+                                            </div>
+                                        </div>
+                                        <Close
+                                            className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                            onClick={() => setReplyMessage(null)}
+                                        />
+                                    </div>
+                                )}
 
+                                {/* Attachment Preview */}
                                 {file && (
-                                    <div className="relative ml-2">
+                                    <div className="mb-2 relative w-fit">
                                         <img
-                                            className="w-28 h-28 rounded-lg border"
+                                            className="w-28 h-28 rounded-xl border object-cover"
                                             src={URL.createObjectURL(file)}
+                                            alt=""
                                         />
                                         <Cancel
-                                            className="absolute top-1 right-1 cursor-pointer text-red-500"
+                                            className="absolute -top-2 -right-2 bg-white rounded-full text-red-500 cursor-pointer shadow"
                                             onClick={() => setFile(null)}
                                         />
                                     </div>
                                 )}
 
-                                <div className="relative flex-1 mx-2">
-                                    {replyMessage && (
-                                        <div className="absolute -top-16 left-0 right-0 bg-blue-50 border-l-4 border-blue-400 p-2 rounded-md flex justify-between items-center">
-                                            <div>
-                                                <span className="text-blue-600 font-semibold text-sm">
-                                                    {replySender === user.username ? "You" : replySender}
-                                                </span>
-                                                <div className="text-xs text-gray-600 truncate">
-                                                    {replyMessage.text || "Media"}
-                                                </div>
-                                            </div>
-                                            <Close
-                                                className="cursor-pointer text-gray-600"
-                                                onClick={() => setReplyMessage(null)}
-                                            />
+                                {/* Composer */}
+                                <div className="flex items-end gap-3">
+                                    {/* Audio */}
+                                    <AudioRecorder sender={user._id} conversationId={currentChat._id} />
+
+                                    {/* Input */}
+                                    <div className="relative flex-1">
+                                        <textarea
+                                            value={newMessage}
+                                            onChange={(e) => setNewMessage(e.target.value)}
+                                            placeholder="Type a message"
+                                            rows={1}
+                                            className="w-full resize-none rounded-2xl border border-gray-300 
+                   px-4 py-3 pr-12 text-sm text-gray-700
+                   focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        />
+
+                                        {/* Emoji */}
+                                        <div
+                                            ref={emojiIconRef}
+                                            onClick={handleEmojiClick}
+                                            className="absolute right-4 bottom-3 cursor-pointer text-gray-400 hover:text-gray-600"
+                                        >
+                                            <EmojiEmotionsOutlined />
                                         </div>
-                                    )}
 
-                                    <textarea
-                                        value={newMessage}
-                                        onChange={(e) => setNewMessage(e.target.value)}
-                                        className="w-full h-12 resize-none border rounded-md px-3 py-2 pr-10 text-gray-700 focus:outline-none"
-                                        placeholder="Type a message"
-                                    />
-
-                                    <div
-                                        ref={emojiIconRef}
-                                        onClick={handleEmojiClick}
-                                        className="absolute bottom-2 left-2 cursor-pointer text-gray-500"
-                                    >
-                                        <EmojiEmotionsOutlined />
+                                        {showEmojiPicker && (
+                                            <div
+                                                ref={emojiPickerRef}
+                                                className="absolute bottom-14 right-0 z-20"
+                                            >
+                                                <EmojiPicker
+                                                    onEmojiClick={(e) =>
+                                                        setNewMessage((prev) => prev + e.emoji)
+                                                    }
+                                                />
+                                            </div>
+                                        )}
                                     </div>
 
-                                    {showEmojiPicker && (
-                                        <div ref={emojiPickerRef} className="absolute bottom-14 left-0 z-10">
-                                            <EmojiPicker onEmojiClick={(e) => setNewMessage(prev => prev + e.emoji)} />
-                                        </div>
-                                    )}
-                                </div>
-
-                                <label htmlFor="file" className="cursor-pointer text-gray-500 mx-2">
-                                    <Attachment />
-                                </label>
-                                <input
-                                    id="file"
-                                    type="file"
-                                    accept=".png,.jpeg,.jpg"
-                                    className="hidden"
-                                    onChange={(e) => setFile(e.target.files[0])}
-                                />
-
-                                <div
-                                    onClick={(newMessage.trim() === "" && !file) ? null : handleSubmit}
-                                    className="ml-2"
-                                >
-                                    <Send
-                                        className={(newMessage.trim() === "" && !file)
-                                            ? 'text-gray-400 cursor-not-allowed'
-                                            : 'text-blue-500 cursor-pointer'}
+                                    {/* Attach */}
+                                    <label
+                                        htmlFor="file"
+                                        className="cursor-pointer text-gray-400 hover:text-gray-600"
+                                    >
+                                        <Attachment />
+                                    </label>
+                                    <input
+                                        id="file"
+                                        type="file"
+                                        accept=".png,.jpeg,.jpg"
+                                        className="hidden"
+                                        onChange={(e) => setFile(e.target.files[0])}
                                     />
+
+                                    {/* Send */}
+                                    <button
+                                        type="button"
+                                        onClick={
+                                            newMessage.trim() === "" && !file ? null : handleSubmit
+                                        }
+                                        className={`flex items-center justify-center w-10 h-10 rounded-full transition
+        ${newMessage.trim() === "" && !file
+                                                ? "bg-gray-200 cursor-not-allowed"
+                                                : "bg-blue-500 hover:bg-blue-600"
+                                            }`}
+                                    >
+                                        <Send
+                                            className={
+                                                newMessage.trim() === "" && !file
+                                                    ? "text-gray-400"
+                                                    : "text-white"
+                                            }
+                                        />
+                                    </button>
                                 </div>
                             </form>
+
                         </>
                     ) : (
                         <div className="flex items-center justify-center flex-1 text-gray-400 text-2xl">

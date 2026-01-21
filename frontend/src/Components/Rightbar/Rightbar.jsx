@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './Rightbar.css'; 
 import { Campaign, Message } from "@mui/icons-material"; // Added Message icon
 import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios'; 
@@ -26,9 +25,8 @@ function Rightbar({ user }) {
   }, [user._id]); 
 
   const handleStartChat = (friendId) => {
-    console.log(`Starting chat with friend ID: ${friendId}`);
    
-    alert("Chat function trigger for this friend!");
+    navigate(`https://we-meet-1-h00i.onrender.com/messenger?friendId=${friendId}`);
   };
 
   return (
@@ -50,9 +48,9 @@ function Rightbar({ user }) {
           src='assets/ad.png' 
           alt='Advertisement' 
         />
-        <p className='text-xs text-gray-600 mt-2'>
+        {/* <p className='text-xs text-gray-600 mt-2'>
           *A brief, compelling ad text goes here.*
-        </p>
+        </p> */}
       </div>
 
       <hr className='border-t border-gray-200' />

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import './Online.css';
-import { Search } from '@mui/icons-material';
 import axios from 'axios';
 
 function Online({ conversation, currentUser, }) {
