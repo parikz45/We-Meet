@@ -29,60 +29,85 @@ function Details() {
   }, []);
 
   return (
-    <div className="h-screen flex justify-center items-center bg-gray-100">
-      <div className="bg-white shadow-lg rounded-xl p-[30px] w-[370px] lg:w-[420px] gap-[25px] flex flex-col">
-        
-        {/* title */}
-        <span className="text-blue-600 text-3xl font-bold mb-6 text-center">
-          Tell us more about yourself
-        </span>
+    <div className="min-h-screen flex items-center justify-center bg-neutral-100 px-4">
 
-        {/* state */}
-        <div className="flex flex-col gap-[10px]">
-          <span className="text-sm text-gray-700">Which state are you from?</span>
-          <input
-            defaultValue={User.state || ""}
-            onChange={(e) => setCurrentState(e.target.value)}
-            className="w-full h-9 px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-600"
-          />
+      <div className="w-full max-w-md flex flex-col gap-10 bg-white rounded-3xl shadow-[0_25px_70px_-20px_rgba(0,0,0,0.25)] px-10 py-10">
+
+        {/* Title */}
+        <div className="mb-8 flex flex-col gap-2 text-center">
+          <h1 className="text-3xl font-semibold tracking-tight text-black">
+            Tell us more about yourself
+          </h1>
+          <p className="mt-2 text-sm text-neutral-500">
+            This helps personalize your experience
+          </p>
         </div>
 
-        {/* city */}
-        <div className="flex flex-col gap-[10px] ">
-          <span className="text-sm text-gray-700">Which city are you from?</span>
-          <input
-            defaultValue={User.city || ""}
-            onChange={(e) => setCity(e.target.value)}
-            className="w-full h-9 px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-600"
-          />
+        <div className="space-y-6 flex flex-col gap-4">
+
+          {/* State */}
+          <div className="flex flex-col gap-3">
+            <label className="text-sm text-neutral-600">
+              Which state are you from?
+            </label>
+            <input
+              defaultValue={User.state || ""}
+              onChange={(e) => setCurrentState(e.target.value)}
+              className="h-11 px-4 rounded-xl border border-neutral-300 text-sm 
+                       focus:outline-none focus:border-black transition"
+            />
+          </div>
+
+          {/* City */}
+          <div className="flex flex-col gap-3">
+            <label className="text-sm text-neutral-600">
+              Which city are you from?
+            </label>
+            <input
+              defaultValue={User.city || ""}
+              onChange={(e) => setCity(e.target.value)}
+              className="h-11 px-4 rounded-xl border border-neutral-300 text-sm 
+                       focus:outline-none focus:border-black transition"
+            />
+          </div>
+
+          {/* Relationship */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-neutral-600">
+              Relationship status
+            </label>
+            <select
+              defaultValue={User.relationship || ""}
+              onChange={(e) => setRelation(e.target.value)}
+              className="h-11 px-4 rounded-xl border border-neutral-300 text-sm 
+                       focus:outline-none focus:border-black transition cursor-pointer"
+            >
+              <option value="">Select</option>
+              <option value="single">Single</option>
+              <option value="married">Married</option>
+            </select>
+          </div>
+
         </div>
 
-        {/* relationship */}
-        <div className="flex flex-col gap-[10px]">
-          <span className="text-sm text-gray-700">Relationship status</span>
-          <select
-            defaultValue={User.relationship || ""}
-            onChange={(e) => setRelation(e.target.value)}
-            className="w-full h-9 px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-600 cursor-pointer"
+        {/* Actions */}
+        <div className="mt-10 flex items-center justify-between">
+          <button
+            onClick={() => navigate("/")}
+            className="text-sm text-neutral-500 hover:text-black transition"
           >
-            <option value="">Select</option>
-            <option value="single">Single</option>
-            <option value="married">Married</option>
-          </select>
-        </div>
-
-        {/* actions */}
-        <div className="flex justify-between items-center">
-          <a href="/" className="text-gray-500 text-sm hover:underline">
             Skip
-          </a>
+          </button>
+
           <button
             onClick={handleSubmit}
-            className="h-9 w-32 bg-green-500 text-white rounded-md text-sm font-medium hover:bg-green-600 transition"
+            className="h-11 px-8 rounded-xl bg-black text-white text-sm font-medium cursor-pointer
+                     hover:bg-neutral-800 transition"
           >
             Submit
           </button>
         </div>
+
       </div>
     </div>
   );

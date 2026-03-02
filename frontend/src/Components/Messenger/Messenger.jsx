@@ -28,6 +28,18 @@ function Messenger() {
     const emojiIconRef = useRef();
     const socket = useRef();
     const PF = import.meta.env.VITE_PUBLIC_FOLDER;
+    // at top of Messenger.jsx
+    const [chatUser, setChatUser] = useState(null);
+
+    useEffect(() => {
+        const getChatUser = async () => {
+            if (!currentChat) return;
+            const friendId = currentChat.members.find((m) => m !== user._id);
+            const res = await axios.get(`https://we-meet-1-h00i.onrender.com/api/users?userId=${friendId}`);
+            setChatUser(res.data);
+        };
+        getChatUser();
+    }, [currentChat, user._id]);
 
     // fetching sender of a message being replied to
     useEffect(() => {
@@ -213,10 +225,20 @@ function Messenger() {
 
     return (
         <div className="flex flex-col h-screen">
-            <Navbar />
             <div className="flex flex-1 overflow-hidden">
                 {/* Friends list */}
-                <div className="hidden md:flex md:flex-col w-72 bg-gradient-to-b from-white to-gray-50 border-r border-gray-200">
+                <div className="hidden md:flex md:flex-col w-80 bg-gradient-to-b from-white to-gray-50 border-r border-gray-200">
+
+                    {/* back button */}
+                    <div className="h-16 flex items-center gap-3 px-4 border-b border-gray-200 bg-white">
+                        <button
+                            onClick={() => setCurrentChat(null)}
+                            className="p-2 rounded-full hover:bg-gray-200 transition"   
+                        >
+                            <Close />
+                        </button>
+                        <span className="text-lg font-semibold text-gray-900">Chats</span>
+                    </div>
 
                     {/* Search */}
                     <div className="p-4">
@@ -255,7 +277,7 @@ function Messenger() {
                                     <div
                                         key={friend._id}
                                         onClick={() => handleFriendClick(friend)}
-                                        className="group flex items-center gap-3 px-3 py-3 rounded-xl cursor-pointer
+                                        className="group flex items-center gap-2 px-3 py-3 rounded-xl cursor-pointer
                        hover:bg-white hover:shadow-sm transition-all duration-150"
                                     >
                                         {/* Avatar */}
@@ -264,7 +286,7 @@ function Messenger() {
                                                 src={
                                                     friend.profilePicture
                                                         ? PF + friend.profilePicture
-                                                        : PF + "1.jpeg"
+                                                        : PF + "profile.jpg"
                                                 }
                                                 className="w-10 h-10 rounded-full object-cover ring-2 ring-transparent
                            group-hover:ring-blue-400 transition"
@@ -308,10 +330,28 @@ function Messenger() {
 
                 {/* Chat section */}
                 <div className="flex flex-col flex-1">
+                    {/* Chat Header */}
+                    {currentChat && chatUser && (
+                        <div className="h-18 flex items-center justify-between px-6 border-b border-gray-200 bg-white">
+                            <div className="flex items-center gap-3">
+                                <img
+                                    src={chatUser.profilePicture ? PF + chatUser.profilePicture : PF + "profile.jpg"}
+                                    alt="avatar"
+                                    className="w-12 h-12 rounded-full object-cover"
+                                />
+                                <div className="flex flex-col leading-tight">
+                                    <span className="text-[18px] letter-spacing-0 font-semibold text-gray-900">
+                                        {chatUser.username}
+                                    </span>
+                                    <span className="text-xs text-gray-400">10 min ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     {currentChat ? (
                         <>
                             {/* Messages */}
-                            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                            <div className="flex-1 flex flex-col gap-4 overflow-y-auto px-8 py-6 space-y-3">
                                 {messages.map((m) => {
                                     const isSelf = String(m.sender) === String(user._id);
                                     return (
@@ -362,9 +402,12 @@ function Messenger() {
                                 )}
 
                                 {/* Composer */}
-                                <div className="flex items-end gap-3">
-                                    {/* Audio */}
-                                    <AudioRecorder sender={user._id} conversationId={currentChat._id} />
+                                <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
+
+                                    {/* Mic */}
+                                    <div className="scale-75 origin-center bg-gray-700 flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition">
+                                        <AudioRecorder sender={user._id} conversationId={currentChat._id} />
+                                    </div>
 
                                     {/* Input */}
                                     <div className="relative flex-1">
@@ -373,29 +416,23 @@ function Messenger() {
                                             onChange={(e) => setNewMessage(e.target.value)}
                                             placeholder="Type a message"
                                             rows={1}
-                                            className="w-full resize-none rounded-2xl border border-gray-300 
-                   px-4 py-3 pr-12 text-sm text-gray-700
-                   focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                            className="w-full resize-none bg-transparent text-sm text-gray-700 
+        placeholder:text-gray-400 focus:outline-none px-2 py-2"
                                         />
 
                                         {/* Emoji */}
                                         <div
                                             ref={emojiIconRef}
                                             onClick={handleEmojiClick}
-                                            className="absolute right-4 bottom-3 cursor-pointer text-gray-400 hover:text-gray-600"
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
                                         >
-                                            <EmojiEmotionsOutlined />
+                                            <EmojiEmotionsOutlined fontSize="small" />
                                         </div>
 
                                         {showEmojiPicker && (
-                                            <div
-                                                ref={emojiPickerRef}
-                                                className="absolute bottom-14 right-0 z-20"
-                                            >
+                                            <div ref={emojiPickerRef} className="absolute bottom-12 right-0 z-20">
                                                 <EmojiPicker
-                                                    onEmojiClick={(e) =>
-                                                        setNewMessage((prev) => prev + e.emoji)
-                                                    }
+                                                    onEmojiClick={(e) => setNewMessage((prev) => prev + e.emoji)}
                                                 />
                                             </div>
                                         )}
@@ -404,10 +441,11 @@ function Messenger() {
                                     {/* Attach */}
                                     <label
                                         htmlFor="file"
-                                        className="cursor-pointer text-gray-400 hover:text-gray-600"
+                                        className="flex items-center justify-center w-9 h-9 rounded-full cursor-pointer hover:bg-gray-200 transition"
                                     >
-                                        <Attachment />
+                                        <Attachment fontSize="small" className="text-gray-500" />
                                     </label>
+
                                     <input
                                         id="file"
                                         type="file"
@@ -419,9 +457,7 @@ function Messenger() {
                                     {/* Send */}
                                     <button
                                         type="button"
-                                        onClick={
-                                            newMessage.trim() === "" && !file ? null : handleSubmit
-                                        }
+                                        onClick={newMessage.trim() === "" && !file ? null : handleSubmit}
                                         className={`flex items-center justify-center w-10 h-10 rounded-full transition
         ${newMessage.trim() === "" && !file
                                                 ? "bg-gray-200 cursor-not-allowed"
@@ -429,10 +465,9 @@ function Messenger() {
                                             }`}
                                     >
                                         <Send
+                                            fontSize="small"
                                             className={
-                                                newMessage.trim() === "" && !file
-                                                    ? "text-gray-400"
-                                                    : "text-white"
+                                                newMessage.trim() === "" && !file ? "text-gray-400" : "text-white"
                                             }
                                         />
                                     </button>

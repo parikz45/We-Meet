@@ -25,7 +25,7 @@ function Online({ conversation, currentUser, }) {
         <div className='online'>       
          {/*user profile picture and username */}
             <div className='online-friend'>
-                <img className='chat-image' src={user.profilePicture? PF+ user.profilePicture: PF + '1.jpeg'} />
+                <img className='chat-image' src={user.profilePicture? PF+ user.profilePicture: PF + 'profile.jpg'} />
                 <span className='chat-username'>{user.username} </span>
             </div>
            

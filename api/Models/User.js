@@ -54,7 +54,13 @@ const UserSchema=new mongoose.Schema({
     },
     relationship:{
         type:String,
-    }
+    },
+    resetPasswordToken:{
+        type:String,
+    },
+    resetPasswordExpire:{
+        type:Date,
+    },
 },
 {timestamps: true}
 );

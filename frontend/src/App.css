@@ -4,3 +4,15 @@
   margin: 0;
   font-family: 'Roboto', sans-serif;
 }
+
+.EmojiPickerReact {
+  --epr-bg-color: #ffffff;
+  --epr-category-label-bg-color: transparent;
+  --epr-text-color: #111;
+  --epr-hover-bg-color: #f3f4f6;
+  --epr-focus-bg-color: #e5e7eb;
+  --epr-search-border-color: #e5e7eb;
+  --epr-highlight-color: #111;
+  border-radius: 16px;
+  font-family: Inter, system-ui, sans-serif;
+}

@@ -21,6 +21,11 @@ const notificationRoute = require('./routes/notifications');
 // Load environment variables
 dotenv.config();
 
+console.log("ENV CHECK:", {
+  EMAIL: process.env.EMAIL,
+  EMAIL_PASS: process.env.EMAIL_PASS ? "LOADED" : "MISSING",
+});
+
 // Allowed Origins 
 const allowedOrigins = [
   "http://localhost:5173",

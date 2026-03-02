@@ -1,109 +1,176 @@
-import React, { useContext, useEffect, useState } from 'react';
-import './ProfileRight.css';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { AuthContext } from '../../context/AuthContext';
-import { Add, Remove } from '@mui/icons-material';
+import { AuthContext } from "../../context/AuthContext";
+import { Edit, PersonAddAlt1, Check } from "@mui/icons-material";
 
 function ProfileRight({ user }) {
   const navigate = useNavigate();
-
-  const [friends, setFriends] = useState([]);
   const PF = import.meta.env.VITE_PUBLIC_FOLDER;
   const { user: currentUser, dispatch } = useContext(AuthContext);
+
+  const [friends, setFriends] = useState([]);
   const [following, setFollowing] = useState(
     currentUser.followings.includes(user._id)
   );
 
-  // Fetch friends of the profile user whenever the user ID changes
+  // Fetch friends
   useEffect(() => {
     const getFriends = async () => {
-      if (!user._id) return; 
+      if (!user?._id) return;
       try {
-        const friendList = await axios.get(`https://we-meet-1-h00i.onrender.com/api/users/friends/${user._id}`);
-        setFriends(friendList.data);  
+        const res = await axios.get(
+          `https://we-meet-1-h00i.onrender.com/api/users/friends/${user._id}`
+        );
+        setFriends(res.data || []);
       } catch (err) {
-        console.error("Error fetching friends:", err.response?.data || err.message);
+        console.error(err);
       }
     };
     getFriends();
-  }, [user._id]);
+  }, [user?._id]);
 
-  // Function to follow/unfollow the user
-  const handleClick = async () => {
+
+  // Follow / Unfollow
+  const handleFollow = async () => {
     try {
       if (following) {
-        // Unfollow user
-        await axios.put(`https://we-meet-1-h00i.onrender.com/api/users/${user._id}/unfollow`, {
-          userId: currentUser._id,
-        });
+        await axios.put(
+          `https://we-meet-1-h00i.onrender.com/api/users/${user._id}/unfollow`,
+          { userId: currentUser._id }
+        );
         dispatch({ type: "UNFOLLOW", payload: user._id });
       } else {
-        // Follow user
-        await axios.put(`https://we-meet-1-h00i.onrender.com/api/users/${user._id}/follow`, {
-          userId: currentUser._id,
-        });
+        await axios.put(
+          `https://we-meet-1-h00i.onrender.com/api/users/${user._id}/follow`,
+          { userId: currentUser._id }
+        );
         dispatch({ type: "FOLLOW", payload: user._id });
       }
-      setFollowing(!following);  
+      setFollowing(!following);
     } catch (err) {
       console.log(err);
     }
   };
 
   return (
-    <>
-      {/* follow/unfollow button, visible only if the current user is viewing someone else's profile */}
-      {user.username !== currentUser.username && (
-        <button className='follow-button' onClick={handleClick}>
-          {following ? "Unfollow" : "Follow"}
-          {following ? null : <Add />}
+    <aside className="space-y-6 flex flex-col gap-4">
+
+      {/* FOLLOW BUTTON (only if not own profile) */}
+      {user._id !== currentUser._id && (
+        <button
+          onClick={handleFollow}
+          className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition
+            ${following
+              ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
+        >
+          {following ? (
+            <>
+              <Check fontSize="small" />
+              Following
+            </>
+          ) : (
+            <>
+              <PersonAddAlt1 fontSize="small" />
+              Follow
+            </>
+          )}
         </button>
       )}
 
-      {/* Main right section of the profile page */}
-      <div className='profile-right'>
+      {/* PERSONAL INFO CARD */}
+      <div className="bg-white flex flex-col gap-3 rounded-2xl border border-gray-100 shadow-sm px-8 py-6">
 
-        {/* User information section */}
-        <div className='user-info'>
-          <span className='title'>User information</span>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Personal Information
+          </h3>
 
-          <div className='info'>
-            <span className='option'>state:</span>
-            <span className='value'>{user.state}</span>
-          </div>
-
-          <div className='info'>
-            <span className='option'>city:</span>
-            <span className='value'>{user.city}</span>
-          </div>
-
-          <div className='info'>
-            <span className='option'>Relationship:</span>
-            <span className='value'>{user.relationship}</span>
-          </div>
+          {user._id === currentUser._id && (
+            <button
+              onClick={() => navigate("/details")}
+              className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 transition"
+            >
+              <Edit fontSize="small" />
+              Edit
+            </button>
+          )}
         </div>
 
-        {/* User friends list section */}
-        <div className='user-pics'>
-          <span className='Title2'>User friends</span>
+        <div className="space-y-4 text-[15px]">
+          <div className="flex justify-between">
+            <span className="text-gray-500">State</span>
+            <span className="text-gray-900 font-medium">
+              {user.state || "—"}
+            </span>
+          </div>
 
-          {/* Mapping through friends array and displaying each friend */}
-          {Array.isArray(friends) && friends.map((friend) => (
-            <div className='row1' key={friend._id}>
-              <div onClick={() => navigate("/profile/" + friend.username)} className='set'>
-                <img
-                  className='friend-image'
-                  src={friend.profilePicture ? PF + friend.profilePicture : PF + '1.jpeg'}
-                  alt='friend'
-                />
-                <span className='friend-name'>{friend.username}</span>
-              </div>
-            </div>
-          ))}
+          <div className="flex justify-between">
+            <span className="text-gray-500">City</span>
+            <span className="text-gray-900 font-medium">
+              {user.city || "—"}
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">Relationship</span>
+            <span className="text-gray-900 font-medium">
+              {user.relationship || "—"}
+            </span>
+          </div>
         </div>
       </div>
-    </>
+
+      {/* FRIENDS CARD */}
+      <div className="bg-white rounded-2xl border flex flex-col gap-3 border-gray-100 shadow-sm px-6 py-6">
+
+        <h3 className="text-lg font-semibold text-gray-900 mb-5">
+          Friends
+        </h3>
+
+        {friends.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {friends.slice(0, 3).map((friend) => (
+              <div
+                key={friend._id}
+                className="flex items-center justify-between group"
+              >
+                <div
+                  onClick={() => navigate("/profile/" + friend.username)}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  <img
+                    src={
+                      friend.profilePicture
+                        ? PF + friend.profilePicture
+                        : PF + "profile.jpg"
+                    }
+                    alt={friend.username}
+                    className="w-12 h-12 rounded-full object-cover group-hover:scale-105 transition"
+                  />
+
+                  <span className="text-[15px] font-semibold text-gray-900">
+                    {friend.username}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => navigate("/profile/" + friend.username)}
+                  className="px-4 py-1.5 text-xs font-medium rounded-full border border-gray-200 hover:border-gray-900 hover:bg-gray-50 transition"
+                >
+                  View
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400">No friends to display.</p>
+        )}
+      </div>
+
+    </aside>
   );
 }
 

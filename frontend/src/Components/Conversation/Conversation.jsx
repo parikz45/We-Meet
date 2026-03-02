@@ -1,25 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
-import './Conversation.css';
-import { format } from "timeago.js";
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import { Image } from '@mui/icons-material';
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
+import { CheckCircle, DeleteOutline } from "@mui/icons-material";
+import ConfirmDialogue from "../ConfirmDialogue/ConfirmDialogue";
+import ImageViewer from "../ImageViewer/ImageViewer";
 
 function Conversation({ message, self, onReply }) {
     const PF = import.meta.env.VITE_PUBLIC_FOLDER;
-    const [senderData, setSenderData] = useState(null);
-    const navigate = useNavigate();
-    const [fullImage, setFullImage] = useState(false);
-    const [msgOptions, setMsgOptions] = useState({ visible: false, x: 0, y: 0, messageId: null });
-    const [deletemsg, setDeletemsg] = useState(false);
     const { user } = useContext(AuthContext);
 
-    // fetching message sender's data
+    const [senderData, setSenderData] = useState(null);
+    const [selected, setSelected] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+    const [viewerOpen, setViewerOpen] = useState(false);
+
     useEffect(() => {
         const getData = async () => {
             try {
-                const res = await axios.get(`https://we-meet-1-h00i.onrender.com/api/users?userId=${message.sender}`);
+                const res = await axios.get(
+                    `https://we-meet-1-h00i.onrender.com/api/users?userId=${message.sender}`
+                );
                 setSenderData(res.data);
             } catch (err) {
                 console.log(err);
@@ -28,126 +28,111 @@ function Conversation({ message, self, onReply }) {
         getData();
     }, [message.sender]);
 
-    useEffect(() => {
-        const handleClick = () => {
-            if (msgOptions.visible) {
-                setMsgOptions({ ...msgOptions, visible: false });
-            }
-        }
-        document.addEventListener("click", handleClick);
-        return () => document.removeEventListener("click", handleClick);
-    }, [msgOptions]);
-
-    // delete a message
     const deleteSelectedMsg = async () => {
         try {
             await axios.delete(`https://we-meet-1-h00i.onrender.com/api/messages/${message._id}`, {
-                data: { userId: user._id }
+                data: { userId: user._id },
             });
-            setDeletemsg(false);
+            setShowDelete(false);
+            setSelected(false);
         } catch (err) {
             console.log(err);
         }
-    }
+    };
 
     return (
-        <>
-            <div className={self ? (message.image ? "msg-recievedWithimage" : "msg-recieved") : (message.image ? "msg-sentWithimage" : "msg-sent")}>
+        <div className={`flex w-full ${self ? "justify-end" : "justify-start"} mb-4`}>
+            <div
+                className={`group relative p-4 flex flex-col gap-3 max-w-[70%] rounded-2xl text-sm leading-relaxed
+  ${self
+                        ? message.image
+                            ? "bg-white text-gray-900 shadow ring-1 ring-black/5"
+                            : "bg-blue-500 text-white"
+                        : "bg-gray-100 text-gray-800"
+                    }
+  ${message.image ? "p-2" : "px-4 py-2.5"}
+`}
+                onDoubleClick={() => onReply(message)}
+            >
+                {/* IMAGE */}
+                {message.image && (
+                    <img
+                        src={PF + message.image}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setViewerOpen(true);
+                        }}
+                        className="mb-3 w-64 h-40 object-cover rounded-xl cursor-zoom-in"
+                        alt=""
+                    />
+                )}
 
-                <div className="convo-top">                    
+                {/* TEXT */}
+                {message.text && <div className="mt-1">{message.text}</div>}
 
-                    {/* delete and reply message preview */}
-                    {msgOptions.visible && msgOptions.messageId === message._id && (
-                        <div
-                            className="msg-options"
-                            style={{
-                                position: "fixed",
-                                top: msgOptions.y,
-                                left: msgOptions.x,
-                                background: "white",
-                                boxShadow: "0 0 5px rgba(0,0,0,0.3)",
-                                borderRadius: "5px",
-                                zIndex: 999,
-                                padding: "8px",
-                                cursor: "pointer"
-                            }}
-                        >
-                            {self && <div className="delmsg-span" onClick={() => setDeletemsg(true)}>Delete Message</div>}
-                            <div className="delmsg-span" onClick={() => onReply(message)}>Reply</div>
-                        </div>
-                    )}
+                {/* AUDIO */}
+                {message.audio && (
+                    <audio
+                        controls
+                        className="mt-2 w-full"
+                        src={`https://we-meet-1-h00i.onrender.com/api/messages/audio/${message.audio}`}
+                    />
+                )}
 
-                    <div className="chat-div">
-                        {/* profile picture in chat */}
-                        <img
-                            className="chat-img"
-                            onClick={() => navigate("/profile/" + senderData?.username)}
-                            src={senderData?.profilePicture ? PF + senderData.profilePicture : PF + "profile.jpg"}
-                            alt="profile"
-                        />
-                        <div className="image-text" onDoubleClick={() => onReply(message)} onContextMenu={(e) => {
-                            
-                            e.preventDefault();
-                            setMsgOptions({
-                                visible: true,
-                                x: e.clientX + 10,
-                                y: e.clientY + 10,
-                                messageId: message._id
-                            });
-                        }}>
-                            {/* image in conversation */}
-                            {message.image && (
-                                <img
-                                    onClick={() => setFullImage(true)}
-                                    className="conversation-image"
-                                    src={PF + message.image}
-                                    alt="sent"
-                                />
-                            )}
+                {/* SELECT BUTTON (small circle) */}
+                {self && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelected((prev) => !prev);
+                        }}
+                        className={`absolute -left-5 top-1/2 -translate-y-1/2
+              w-4 h-4 rounded-full border-2 flex items-center justify-center
+              transition opacity-0 group-hover:opacity-100
+              ${selected ? "border-blue-500 bg-blue-500" : "border-gray-300 bg-white"}
+            `}
+                    >
+                        {selected && <span className="w-2 h-2 bg-white rounded-full" />}
+                    </button>
+                )}
 
-                            {/* text in conversation */}
-                            {message.text && (
-                                <div className={self ? 'messageOwn' : (message.image ? 'messageFriend-img' : 'message-friend')}>
-                                    <span className="chat">{message.text}</span>
-                                </div>
-                            )}
-
-                            {/* audio in conversation */}
-                            {message.audio && (
-                                <div className="audio-wrapper">
-                                    <audio controls className="audio-player">
-                                        <source src={"https://we-meet-1-h00i.onrender.com/api/messages/audio/" + message.audio} type="audio/webm" />
-                                        Your browser does not support the audio tag.
-                                    </audio>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    {/* message sent time */}
-                    <span className={self ? "msg-time" : "msgtime-friend"}>{format(message.createdAt)}</span>
-                </div>
+                {/* DELETE BUTTON (left side) */}
+                {self && selected && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setShowDelete(true);
+                        }}
+                        className="absolute -left-10 top-1/2 -translate-y-1/2
+              bg-red-500 text-white p-1.5 rounded-full shadow
+              hover:bg-red-600 transition"
+                    >
+                        <DeleteOutline fontSize="small" />
+                    </button>
+                )}
             </div>
-            
-            {/* chat-image in full screen */}
-            {fullImage && (
-                <div className="fullscreen-overlay" onClick={() => setFullImage(false)}>
-                    <img className="fullscreen-image" src={PF + message.image} alt="full" />
-                </div>
-            )}
-            {/* delete image preview */}
-            {deletemsg &&
-                <div className='logout-overlay'>
-                    <div className="logout-div">
-                        <span style={{ fontWeight: "450" }}>Are you sure you want to delete this message?</span>
-                        <div className="logoutButtons">
-                            <button className="logout-cancel" onClick={() => setDeletemsg(false)}>Cancel</button>
-                            <button className="logout-confirm" onClick={() => deleteSelectedMsg()}>Delete</button>
-                        </div>
-                    </div>
-                </div>
-            }
 
-        </>
+            {/* Confirm Delete */}
+            <ConfirmDialogue
+                open={showDelete}
+                title="Delete Message"
+                description="Are you sure you want to delete this message?"
+                confirmText="Delete"
+                cancelText="Cancel"
+                danger
+                onConfirm={deleteSelectedMsg}
+                onCancel={() => setShowDelete(false)}
+            />
+
+            {/* Fullscreen Image Viewer */}
+            {message.image && (
+                <ImageViewer
+                    open={viewerOpen}
+                    src={PF + message.image}
+                    onClose={() => setViewerOpen(false)}
+                />
+            )}
+        </div>
     );
 }
 

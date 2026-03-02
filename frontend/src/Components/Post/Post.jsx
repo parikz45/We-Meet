@@ -1,30 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
-import { MoreVert } from "@mui/icons-material";
+import { DeleteOutlineRounded, FavoriteBorder, Favorite } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { format } from "timeago.js";
 import { AuthContext } from "../../context/AuthContext";
+import ConfirmDialog from "../ConfirmDialogue/confirmDialogue";
+import ImageViewer from "../ImageViewer/imageviewer";
+import { toast } from "react-toastify";
 
-function Post({ post }) {
+function Post({ post, onDelete }) {
   const navigate = useNavigate();
   const [like, setLike] = useState(post.likes?.length ?? 0);
   const [isLiked, setIsLiked] = useState(false);
   const [user, setUser] = useState({});
   const { user: currentUser } = useContext(AuthContext);
   const PF = import.meta.env.VITE_PUBLIC_FOLDER;
-  const [showdelete, setShowdelete] = useState(false);
   const [checkDelete, setCheckDelete] = useState(false);
-  const [fullScreenImg, setFullScreenImg] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
-  // Like handler
   const likeHandler = () => {
-    try {
-      axios.put(`https://we-meet-1-h00i.onrender.com/api/posts/${post._id}/like`, {
-        userId: currentUser._id,
-      });
-    } catch (err) {
-      console.log(err);
-    }
+    axios.put(`https://we-meet-1-h00i.onrender.com/api/posts/${post._id}/like`, {
+      userId: currentUser._id,
+    });
     setLike((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked(!isLiked);
   };
@@ -34,145 +31,136 @@ function Post({ post }) {
   }, [currentUser._id, post.likes]);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get(
-          `https://we-meet-1-h00i.onrender.com/api/users?userId=${post.userId}`
-        );
-        setUser(res.data);
-      } catch (err) {
-        console.error("Error fetching user:", err);
-      }
-    };
-    fetchUser();
-  }, [post.userId, currentUser]);
+    axios
+      .get(`https://we-meet-1-h00i.onrender.com/api/users?userId=${post.userId}`)
+      .then((res) => setUser(res.data));
+  }, [post.userId]);
 
-  const handleDelete = () => {
+  const getProfileSrc = (pic) => {
+    if (!pic) return PF + "profile.jpg";
+    if (pic.startsWith("http")) return pic;
+    return PF + pic;
+  };
+
+  const getPostImgSrc = (img) => {
+    if (!img) return null;
+    if (img.startsWith("http")) return img;
+    return PF + img;
+  };
+
+  const hasImage = !!post.img;
+
+  const handleDelete = async () => {
     try {
-      axios.delete(`https://we-meet-1-h00i.onrender.com/api/posts/${post._id}`, {
-        data: { userId: currentUser._id },
-      });
-      window.location.reload();
+      await axios.delete(
+        `https://we-meet-1-h00i.onrender.com/api/posts/${post._id}`,
+        {
+          data: { userId: currentUser._id },
+        }
+      );
+      
+      toast.success("Post deleted successfully!");
+      onDelete(post._id);
     } catch (err) {
       console.log(err);
+      toast.error("Error!! Failed to delete post!");
     }
   };
 
-  const setDelete = () => {
-    setShowdelete((prev) => !prev);
-  };
-
   return (
-    <div
-      className="mt-6 mx-auto w-full md:max-w-[590px] rounded-lg shadow-lg p-4 sm:p-6 bg-white"
-      key={post._id}
-    >
-      {/* Top section with profile image, username, timestamp, and options */}
-      <div className="flex items-center justify-between pb-4">
-        <div className="flex items-center gap-4">
+    <article className="mx-auto w-full flex flex-col gap-4 md:max-w-[720px] bg-white rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/5 px-5 py-5 mb-6 font-app">
+
+      {checkDelete && (
+        <ConfirmDialog
+          open={checkDelete}
+          title="Delete post?"
+          description="This post will be permanently removed."
+          confirmText="Delete"
+          cancelText="Cancel"
+          danger
+          onCancel={() => setCheckDelete(false)}
+          onConfirm={handleDelete}
+        />
+      )}
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
           <img
             onClick={() => navigate(`/profile/${user.username}`)}
-            className="w-12 h-12 rounded-full object-cover border-2 border-transparent transition-transform duration-200 hover:scale-105 cursor-pointer"
-            src={
-              user.profilePicture
-                ? PF + user.profilePicture
-                : PF + "profile.jpg"
-            }
-            alt="Profile"
+            className="w-14 h-14 rounded-full object-cover cursor-pointer ring-1 ring-black/5"
+            src={getProfileSrc(user.profilePicture)}
           />
-          <div className="flex flex-col">
-            <span className="font-bold text-lg text-gray-800 transition-colors hover:text-blue-600 cursor-pointer">
+          <div>
+            <p className="text-md font-semibold text-gray-900 cursor-pointer hover:underline">
               {user.username}
-            </span>
-            <span className="text-sm text-gray-500">
-              {format(post.createdAt)}
-            </span>
+            </p>
+            <p className="text-xs text-gray-500">{format(post.createdAt)}</p>
           </div>
         </div>
 
-        <div className="relative">
-          {user.username === currentUser.username && (
-            <button
-              onClick={() => setCheckDelete(true)}
-              className="text-red-500 cursor-pointer hover:text-red-700 font-semibold text-sm px-2 py-1 border border-red-500 rounded-lg transition-colors"
-            >
-              Delete
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        {/* Caption */}
-        <span className="block text-base">{post.desc}</span>
-
-        {/* Post image */}
-        {post.img && (
-          <img
-            className="w-full object-cover mx-auto mt-4 cursor-pointer rounded-md"
-            src={PF + post.img}
-            onClick={() => setFullScreenImg(true)}
-          />
+        {user.username === currentUser.username && (
+          <button
+            onClick={() => setCheckDelete(true)}
+            className="text-red-500 hover:text-red-600 p-1 rounded-full cursor-pointer hover:bg-red-50 transition"
+          >
+            <DeleteOutlineRounded fontSize="small" />
+          </button>
         )}
       </div>
 
-      {/* Bottom */}
-      <div className="flex items-center pt-5 gap-2">
-        <img
-          onClick={likeHandler}
-          className="w-6 mr-2 cursor-pointer"
-          src={PF + "like.png"}
-        />
-        <img
-          onClick={likeHandler}
-          className="w-6 mr-2 cursor-pointer"
-          src={PF + "heart.png"}
-        />
-        <span className="text-sm">{like} people liked</span>
-        <span className="ml-auto mr-6 text-sm text-red-600">
-          {post.comment} comments
-        </span>
-      </div>
+      {/* Body */}
+      <div className="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-5 items-stretch">
 
-      {/* Delete confirmation modal */}
-      {checkDelete && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 flex flex-col gap-5 shadow-lg space-y-4 max-w-sm">
-            <span className="font-normal text-[18px]">
-              Are you sure you want to delete this post?
-            </span>
-            <div className="flex justify-center gap-4 space-x-3">
+        {/* Left */}
+        <div
+          className={`flex flex-col ${hasImage ? "justify-between min-h-[180px] md:min-h-[200px]" : "gap-5"
+            }`}
+        >
+          {/* Description */}
+          <p className="text-[15px] text-gray-800 leading-relaxed">
+            {post.desc}
+          </p>
+
+          {/* Actions + Input */}
+          <div className="mt-3">
+            <div className="flex items-center gap-6 mb-2">
               <button
-                className="px-4 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                onClick={() => setCheckDelete(false)}
+                onClick={likeHandler}
+                className={`flex items-center gap-1 text-sm transition ${isLiked ? "text-rose-500" : "text-gray-500 hover:text-gray-700"
+                  }`}
               >
-                Cancel
+                {isLiked ? <Favorite fontSize="small" /> : <FavoriteBorder fontSize="small" />}
+                <span>{like}</span>
               </button>
-              <button
-                className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                onClick={handleDelete}
-              >
-                Delete
-              </button>
+
             </div>
           </div>
         </div>
-      )}
 
-      {/* Fullscreen image overlay */}
-      {fullScreenImg && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-85 flex items-center justify-center z-50 p-4"
-          onClick={() => setFullScreenImg(false)}
-        >
-          <img
-            className="max-w-full max-h-[90%] rounded-lg animate-zoomIn"
-            src={PF + post.img}
-            alt="full"
-          />
-        </div>
+        {/* Right Image */}
+        {hasImage && (
+          <div
+            onClick={() => setViewerOpen(true)}
+            className="relative h-[180px] md:h-[200px] rounded-2xl overflow-hidden cursor-pointer group shadow-sm"
+          >
+            <img
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              src={getPostImgSrc(post.img)}
+              alt=""
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition" />
+          </div>
+        )}
+      </div>
+      {viewerOpen && (
+        <ImageViewer
+          open={viewerOpen}
+          src={getPostImgSrc(post.img)}
+          onClose={() => setViewerOpen(false)}
+        />
       )}
-    </div>
+    </article>
   );
 }
 

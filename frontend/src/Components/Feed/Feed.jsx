@@ -8,6 +8,10 @@ function Feed({ username }) {
   const [posts, setPost] = useState([]);
   const { user } = useContext(AuthContext)
 
+  const handleDeleteFromState = (postId) => {
+    setPost((prev) => prev.filter((p) => p._id !== postId));
+  };
+
   // fetching posts
   useEffect(() => {
     const fetchPosts = async () => {
@@ -38,11 +42,11 @@ function Feed({ username }) {
 
 
   return (
-    <div className="pt-5 flex-5">
+    <div className="pt-5 flex-5 pl-18">
       <div className="flex flex-col gap-10 ">
-        {(!username || user.username===username) && <Share />}
-        {posts.map((p) => (
-          <Post key={p._id} post={p} />
+        {(!username || user.username === username) && <Share />}
+        {posts.map((post) => (
+          <Post key={post._id} post={post} onDelete={handleDeleteFromState} />
         ))}
       </div>
     </div>
