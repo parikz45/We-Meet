@@ -159,9 +159,3 @@ We-Meet/
 3. Commit changes (`git commit -m 'Add new feature'`).  
 4. Push to branch (`git push origin feature/new-feature`).  
 5. Create a Pull Request.  
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License.
