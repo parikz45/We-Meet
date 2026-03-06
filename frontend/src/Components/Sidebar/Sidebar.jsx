@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from 'react-toastify';
-import ConfirmDialog from "../ConfirmDialogue/ConfirmDialogue";
+import ConfirmDialog from "../ConfirmDialogue/confirmDialogue";
 
 function Sidebar() {
   const { user, dispatch } = useContext(AuthContext);
