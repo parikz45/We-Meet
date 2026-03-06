@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
-import { CheckCircle, DeleteOutline } from "@mui/icons-material";
-import ConfirmDialogue from "../ConfirmDialogue/ConfirmDialogue";
-import ImageViewer from "../ImageViewer/ImageViewer";
+import { DeleteOutline } from "@mui/icons-material";
+import ConfirmDialog from "../ConfirmDialogue/confirmDialogue";
+import ImageViewer from "../ImageViewer/imageviewer";
 
 function Conversation({ message, self, onReply }) {
     const PF = import.meta.env.VITE_PUBLIC_FOLDER;
@@ -113,7 +113,7 @@ function Conversation({ message, self, onReply }) {
             </div>
 
             {/* Confirm Delete */}
-            <ConfirmDialogue
+            <ConfirmDialog
                 open={showDelete}
                 title="Delete Message"
                 description="Are you sure you want to delete this message?"
