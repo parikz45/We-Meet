@@ -20,7 +20,7 @@ import About from './Components/About/About';
 import Terms from './Components/Terms/Terms';
 import Help from './Components/Help/Help';
 
-
+// homepage
 function Home() {
   const { user } = useContext(AuthContext);
   const isMobile = window.innerWidth <= 768;
