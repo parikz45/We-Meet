@@ -11,10 +11,10 @@ import { AuthContext } from './context/AuthContext';
 import Messenger from './Components/Messenger/Messenger';
 import Details from './Components/Details/Details';
 import Notfound from './Components/Notfound/Notfound';
-import ForgotPassword from './Components/ForgotPassword/ForgotPassword';
+// import ForgotPassword from './Components/ForgotPassword/ForgotPassword';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ResetPassword from './Components/ForgotPassword/resetPassword';
+// import ResetPassword from './Components/ForgotPassword/resetPassword';
 import Privacy from './Components/Privacy/Privacy';
 import About from './Components/About/About';
 import Terms from './Components/Terms/Terms';
@@ -48,8 +48,8 @@ function App() {
           <Route path='/profile/:username' element={user ? <Profile /> : <Login />}></Route>
           <Route path='/chat' element={user ? <Messenger /> : <Login />}></Route>
           <Route path='/details' element={<Details />}></Route>
-          <Route path='/forgotPassword' element={<ForgotPassword />}></Route>
-          <Route path='/resetPassword/:token' element={<ResetPassword />}></Route>
+          {/* <Route path='/forgotPassword' element={<ForgotPassword />}></Route> */}
+          {/* <Route path='/resetPassword/:token' element={<ResetPassword />}></Route> */}
           <Route path='/privacy' element={<Privacy />}></Route>
           <Route path='/about' element={<About/>}></Route>
           <Route path='/terms' element={<Terms/>}></Route>
