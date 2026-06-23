@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState } from "react";
 import { PhotoLibrary, LocationOn, EmojiEmotionsOutlined, Close } from "@mui/icons-material";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
@@ -11,7 +11,6 @@ function Share() {
   const [desc, setDesc] = useState("");
   const [file, setFile] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const emojiRef = useRef(null);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -26,7 +25,6 @@ function Share() {
     if (file) {
       const data = new FormData();
       data.append("file", file);
-
       try {
         const res = await axios.post("https://we-meet-1-h00i.onrender.com/api/upload", data);
         newPost.img = res.data.filename;
@@ -45,7 +43,6 @@ function Share() {
 
   const handleLocation = () => {
     if (!navigator.geolocation) return;
-
     navigator.geolocation.getCurrentPosition((pos) => {
       const { latitude, longitude } = pos.coords;
       setDesc((prev) => prev + ` https://www.google.com/maps?q=${latitude},${longitude}`);
@@ -53,18 +50,19 @@ function Share() {
   };
 
   return (
-    <div className="mt-6 mx-auto flex flex-col gap-5 w-full md:max-w-[720px] bg-white rounded-3xl shadow-[0_12px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/5 px-5 py-4 font-app">
+    <div className="w-full bg-white rounded-2xl border border-gray-200/80 shadow-sm overflow-hidden">
 
-      {/* Input Row */}
-      <div className="flex items-center gap-3">
+      {/* Top: avatar + textarea */}
+      <div className="flex gap-3 px-5 pt-5 pb-3">
         <img
-          className="w-11 h-11 rounded-full object-cover ring-1 ring-black/5"
+          className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-100 shrink-0 mt-0.5"
           src={user.profilePicture ? PF + user.profilePicture : PF + "profile.jpg"}
           alt="User"
         />
-
-        <input
-          className="flex-1 bg-gray-50 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200 transition"
+        <textarea
+          rows={2}
+          className="flex-1 resize-none bg-transparent text-sm text-gray-800 outline-none
+                     placeholder:text-gray-400 leading-relaxed"
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
           placeholder={`What's on your mind, ${user.username}?`}
@@ -73,28 +71,32 @@ function Share() {
 
       {/* Image Preview */}
       {file && (
-        <div className="relative mt-4 rounded-2xl overflow-hidden group">
+        <div className="relative mx-5 mb-3 rounded-xl overflow-hidden">
           <img
             src={URL.createObjectURL(file)}
             alt="preview"
-            className="w-full max-h-[320px] object-cover rounded-2xl"
+            className="w-full max-h-[260px] object-cover rounded-xl"
           />
           <button
             onClick={() => setFile(null)}
-            className="absolute top-3 right-3 bg-black/60 hover:bg-black text-white rounded-full p-1 transition"
+            className="absolute top-2 right-2 bg-black/60 hover:bg-black text-white rounded-full p-1 transition"
           >
             <Close fontSize="small" />
           </button>
         </div>
       )}
 
-      {/* Actions */}
-      <form onSubmit={submitHandler} className="mt-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      {/* Divider */}
+      <div className="h-px bg-gray-100 mx-5" />
 
-          <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer px-3 py-1.5 rounded-full hover:bg-gray-100 transition">
-            <PhotoLibrary fontSize="small" />
-            Media
+      {/* Bottom: actions + post button */}
+      <form onSubmit={submitHandler} className="flex items-center justify-between px-4 py-3">
+
+        <div className="flex items-center gap-0.5">
+          <label className="flex items-center gap-1.5 text-xs font-medium text-gray-500 cursor-pointer
+                            px-3 py-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition">
+            <PhotoLibrary sx={{ fontSize: 17 }} />
+            Photo
             <input
               type="file"
               accept=".png,.jpeg,.jpg"
@@ -106,39 +108,41 @@ function Share() {
           <button
             type="button"
             onClick={handleLocation}
-            className="flex items-center gap-2 text-xs text-gray-600 px-3 py-1.5 rounded-full hover:bg-gray-100 transition"
+            className="flex items-center gap-1.5 text-xs font-medium text-gray-500
+                       px-3 py-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition"
           >
-            <LocationOn fontSize="small" />
+            <LocationOn sx={{ fontSize: 17 }} />
             Location
           </button>
 
           <button
             type="button"
             onClick={() => setShowEmojiPicker((p) => !p)}
-            className="flex items-center gap-2 text-xs text-gray-600 px-3 py-1.5 rounded-full hover:bg-gray-100 transition"
+            className="flex items-center gap-1.5 text-xs font-medium text-gray-500
+                       px-3 py-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition"
           >
-            <EmojiEmotionsOutlined fontSize="small" />
+            <EmojiEmotionsOutlined sx={{ fontSize: 17 }} />
             Emoji
           </button>
         </div>
 
         <button
           type="submit"
-          className="bg-black text-white text-sm px-5 cursor-pointer py-2 rounded-full hover:bg-gray-900 transition shadow-sm"
+          className="bg-indigo-600 text-white text-sm font-medium px-5 py-2 rounded-lg
+                     hover:bg-indigo-700 active:scale-[0.98] transition-all cursor-pointer"
         >
           Post
         </button>
       </form>
 
-      {/* Emoji Picker Floating Panel */}
+      {/* Emoji Picker */}
       {showEmojiPicker && (
         <div className="fixed bottom-24 right-6 z-50">
-          <div className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] ring-1 ring-black/10 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.2)] ring-1 ring-black/10 overflow-hidden">
             <EmojiPicker
               height={380}
               width={320}
               skinTonesDisabled
-              searchDisabled={false}
               previewConfig={{ showPreview: false }}
               onEmojiClick={(e) => setDesc((prev) => prev + e.emoji)}
             />

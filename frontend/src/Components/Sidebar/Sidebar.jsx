@@ -24,42 +24,39 @@ function Sidebar() {
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
     navigate("/login");
-    toast.success("Logged out successfully!", {
-      icon: "👋",
-    });
+    toast.success("Logged out successfully!", { icon: "👋" });
   };
 
-  const notify = () =>
-    toast("You have no new notifications!", {
-      icon: "🔔",
-    });
-
-  const bookmark = () =>
-    toast("You have no saved posts!", {
-      icon: "🔖",
-    });
+  const notify = () => toast("You have no new notifications!", { icon: "🔔" });
+  const bookmark = () => toast("You have no saved posts!", { icon: "🔖" });
 
   return (
     <>
-      <aside className="w-72 h-[calc(100vh-24px)] sticky top-3 bg-white rounded-3xl shadow-sm px-4 py-3 flex flex-col justify-between font-[Inter,system-ui,sans-serif]">
+      <aside className="w-64 shrink-0 h-[calc(100vh-48px)] sticky top-6 bg-white rounded-2xl border border-gray-200/80 shadow-sm px-3 py-4 flex flex-col justify-between">
 
         {/* Top */}
-        <div>
+        <div className="flex flex-col gap-1">
+
           {/* Profile Card */}
           <div
             onClick={() => navigate(`/profile/${user.username}`)}
-            className="bg-gray-50 rounded-2xl px-4 py-3 flex flex-col items-center gap-2 cursor-pointer hover:bg-gray-100 transition"
+            className="rounded-xl px-3 py-4 flex flex-col items-center gap-2 cursor-pointer hover:bg-gray-50 transition mb-2"
           >
-            <img
-              src={user.profilePicture ? PF + user.profilePicture : PF + "profile.jpg"}
-              className="w-24 h-24 rounded-full object-cover ring-2 ring-blue-500"
-            />
-            <p className="text-[24px] font-semibold text-gray-900">{user.username}</p>
-            <span className="text-[12px] text-gray-500 tracking-wide">View profile</span>
+            <div className="relative">
+              <img
+                src={user.profilePicture ? PF + user.profilePicture : PF + "profile.jpg"}
+                className="w-20 h-20 rounded-full object-cover ring-2 ring-indigo-500"
+              />
+            </div>
+            <p className="text-base font-semibold text-gray-900">{user.username}</p>
+            <span className="text-xs text-indigo-500 font-medium">View profile</span>
           </div>
 
+          {/* Divider */}
+          <div className="h-px bg-gray-100 mx-2 mb-2" />
+
           {/* Navigation */}
-          <nav className="mt-3 space-y-0.5">
+          <nav className="flex flex-col gap-0.5">
             <SidebarItem icon={<HomeOutlined />} label="Home" onClick={() => navigate("/")} />
             <SidebarItem icon={<NotificationsNoneOutlined />} label="Notifications" onClick={notify} />
             <SidebarItem icon={<ChatBubbleOutline />} label="Messages" onClick={() => navigate("/chat")} />
@@ -69,7 +66,7 @@ function Sidebar() {
         </div>
 
         {/* Logout */}
-        <div className="pt-2 border-t border-gray-200">
+        <div className="border-t border-gray-100 pt-2">
           <SidebarItem
             icon={<LogoutOutlined />}
             label="Logout"
@@ -79,20 +76,18 @@ function Sidebar() {
         </div>
 
       </aside>
-      {/* Logout Confirmation Dialogue */}
-      {
-        showLogoutConfirm && (
-          <ConfirmDialog
-            open={showLogoutConfirm}
-            title="Logout"
-            description="Are you sure you want to logout?"
-            confirmText="Logout"
-            cancelText="Cancel"
-            onConfirm={handleLogout}
-            onCancel={() => setShowLogoutConfirm(false)}
-          />
-        )
-      }
+
+      {showLogoutConfirm && (
+        <ConfirmDialog
+          open={showLogoutConfirm}
+          title="Logout"
+          description="Are you sure you want to logout?"
+          confirmText="Logout"
+          cancelText="Cancel"
+          onConfirm={handleLogout}
+          onCancel={() => setShowLogoutConfirm(false)}
+        />
+      )}
     </>
   );
 }
@@ -104,15 +99,11 @@ function SidebarItem({ icon, label, onClick, danger }) {
       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition
         ${danger
           ? "text-red-500 hover:bg-red-50"
-          : "text-gray-600 hover:bg-gray-100"}
+          : "text-gray-600 hover:bg-gray-50 hover:text-indigo-600"}
       `}
     >
-      <span className={`text-[21px] ${danger ? "opacity-100" : "opacity-70"}`}>
-        {icon}
-      </span>
-      <span className={`text-[16px] py-[5px] font-semibold tracking-wide ${danger ? "font-medium" : ""}`}>
-        {label}
-      </span>
+      <span className="text-[20px] opacity-80">{icon}</span>
+      <span className="text-sm font-medium">{label}</span>
     </div>
   );
 }
