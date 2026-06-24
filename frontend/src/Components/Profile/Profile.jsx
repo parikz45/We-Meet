@@ -18,7 +18,7 @@ function Profile() {
     const fetchUser = async () => {
       try {
         const res = await axios.get(
-          `https://we-meet-1-h00i.onrender.com/api/users?username=${userName}`
+          `https://we-meet-9jye.onrender.com/api/users?username=${userName}`
         );
         setUser(res.data);
       } catch (err) {
@@ -36,10 +36,10 @@ function Profile() {
     data.append("file", file);
 
     try {
-      const response = await axios.post("https://we-meet-1-h00i.onrender.com/api/upload", data);
+      const response = await axios.post("https://we-meet-9jye.onrender.com/api/upload", data);
       const imgPreview = response.data.filename;
 
-      await axios.put(`https://we-meet-1-h00i.onrender.com/api/users/${user._id}`, {
+      await axios.put(`https://we-meet-9jye.onrender.com/api/users/${user._id}`, {
         userId: currentUser._id,
         profilePicture: imgPreview,
       });

@@ -26,7 +26,7 @@ function Share() {
       const data = new FormData();
       data.append("file", file);
       try {
-        const res = await axios.post("https://we-meet-1-h00i.onrender.com/api/upload", data);
+        const res = await axios.post("https://we-meet-9jye.onrender.com/api/upload", data);
         newPost.img = res.data.filename;
       } catch (err) {
         console.log(err);
@@ -34,7 +34,7 @@ function Share() {
     }
 
     try {
-      await axios.post("https://we-meet-1-h00i.onrender.com/api/posts", newPost);
+      await axios.post("https://we-meet-9jye.onrender.com/api/posts", newPost);
       window.location.reload();
     } catch (err) {
       console.log(err);

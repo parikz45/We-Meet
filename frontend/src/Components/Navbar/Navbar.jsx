@@ -12,7 +12,7 @@ function Navbar() {
   useEffect(() => {
     const findAllUsers = async () => {
       try {
-        const res = await axios.get("https://we-meet-1-h00i.onrender.com/api/users/all");
+        const res = await axios.get("https://we-meet-9jye.onrender.com/api/users/all");
         setAllUsers(res.data);
       } catch (err) {
         console.log(err);

@@ -19,7 +19,7 @@ function Post({ post, onDelete }) {
   const [viewerOpen, setViewerOpen] = useState(false);
 
   const likeHandler = () => {
-    axios.put(`https://we-meet-1-h00i.onrender.com/api/posts/${post._id}/like`, {
+    axios.put(`https://we-meet-9jye.onrender.com/api/posts/${post._id}/like`, {
       userId: currentUser._id,
     });
     setLike((prev) => (isLiked ? prev - 1 : prev + 1));
@@ -32,7 +32,7 @@ function Post({ post, onDelete }) {
 
   useEffect(() => {
     axios
-      .get(`https://we-meet-1-h00i.onrender.com/api/users?userId=${post.userId}`)
+      .get(`https://we-meet-9jye.onrender.com/api/users?userId=${post.userId}`)
       .then((res) => setUser(res.data));
   }, [post.userId]);
 
@@ -52,7 +52,7 @@ function Post({ post, onDelete }) {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`https://we-meet-1-h00i.onrender.com/api/posts/${post._id}`, {
+      await axios.delete(`https://we-meet-9jye.onrender.com/api/posts/${post._id}`, {
         data: { userId: currentUser._id },
       });
       toast.success("Post deleted successfully!");

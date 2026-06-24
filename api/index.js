@@ -31,8 +31,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "https://we-meet-ebon.vercel.app",
-  "https://we-meet-1-h00i.onrender.com",
-  "https://we-meet-1-h00i.onrender.com"
+  "https://we-meet-9jye.onrender.com",
+  "https://we-meet-9jye.onrender.com"
 ];
 
 // Middleware

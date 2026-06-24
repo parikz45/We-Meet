@@ -20,7 +20,7 @@ function ProfileRight({ user }) {
       if (!user?._id) return;
       try {
         const res = await axios.get(
-          `https://we-meet-1-h00i.onrender.com/api/users/friends/${user._id}`
+          `https://we-meet-9jye.onrender.com/api/users/friends/${user._id}`
         );
         setFriends(res.data || []);
       } catch (err) {
@@ -36,13 +36,13 @@ function ProfileRight({ user }) {
     try {
       if (following) {
         await axios.put(
-          `https://we-meet-1-h00i.onrender.com/api/users/${user._id}/unfollow`,
+          `https://we-meet-9jye.onrender.com/api/users/${user._id}/unfollow`,
           { userId: currentUser._id }
         );
         dispatch({ type: "UNFOLLOW", payload: user._id });
       } else {
         await axios.put(
-          `https://we-meet-1-h00i.onrender.com/api/users/${user._id}/follow`,
+          `https://we-meet-9jye.onrender.com/api/users/${user._id}/follow`,
           { userId: currentUser._id }
         );
         dispatch({ type: "FOLLOW", payload: user._id });
