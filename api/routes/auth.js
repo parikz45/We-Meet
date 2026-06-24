@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const User = require("../Models/User");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
 const { sendMail } = require("../utils/nodemailer");
 
@@ -9,8 +9,8 @@ const { sendMail } = require("../utils/nodemailer");
 // ==========================
 router.post("/register", async (req, res) => {
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs.hash(req.body.password, salt);
 
     const newUser = new User({
       username: req.body.username,
@@ -34,7 +34,7 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(404).json("User not found");
 
-    const validPassword = await bcrypt.compare(req.body.password, user.password);
+    const validPassword = await bcryptjs.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).json("Wrong password");
 
     res.status(200).json(user);
@@ -95,8 +95,8 @@ router.post("/reset-password/:token", async (req, res) => {
 
     if (!user) return res.status(400).json("Invalid or expired token");
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs.hash(req.body.password, salt);
 
     user.password = hashedPassword;
     user.resetPasswordToken = undefined;

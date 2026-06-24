@@ -1,9 +1,8 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import './App.css'
 import Feed from './Components/Feed/Feed';
 import Sidebar from './Components/Sidebar/Sidebar';
-import Rightbar from './Components/Rightbar/Rightbar';
-import { BrowserRouter as Router, Route, Routes, redirect, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './Components/Login/Login';
 import Signup from './Components/Signup/Signup';
 import Profile from './Components/Profile/Profile';
@@ -11,50 +10,48 @@ import { AuthContext } from './context/AuthContext';
 import Messenger from './Components/Messenger/Messenger';
 import Details from './Components/Details/Details';
 import Notfound from './Components/Notfound/Notfound';
-// import ForgotPassword from './Components/ForgotPassword/ForgotPassword';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import ResetPassword from './Components/ForgotPassword/resetPassword';
 import Privacy from './Components/Privacy/Privacy';
 import About from './Components/About/About';
 import Terms from './Components/Terms/Terms';
 import Help from './Components/Help/Help';
+import Navbar from './Components/Navbar/Navbar';
 
-// homepage
 function Home() {
   const { user } = useContext(AuthContext);
   const isMobile = window.innerWidth <= 768;
-
+ 
   return (
-    <div>
-      <div className="flex gap-10 mt-4 px-2">
+    <div className="min-h-screen bg-[#f5f5f7]">
+      <Navbar />
+      <div className="max-w-6xl mx-auto flex gap-6 px-4 py-6">
         {!isMobile && <Sidebar />}
         <Feed />
-        {!isMobile && <Rightbar user={user} />}
       </div>
-
     </div>
-  )
+  );
 }
+
 function App() {
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
   return (
     <>
       <Router>
         <Routes>
-          < Route path='/' element={user ? <Home /> : <Login />}></Route>
-          <Route path='/login' element={user ? <Navigate to="/" /> : <Login />} ></Route>
-          <Route path='/signup' element={user ? <Navigate to="/" /> : <Signup />} ></Route>
-          <Route path='/profile/:username' element={user ? <Profile /> : <Login />}></Route>
-          <Route path='/chat' element={user ? <Messenger /> : <Login />}></Route>
-          <Route path='/details' element={<Details />}></Route>
-          {/* <Route path='/forgotPassword' element={<ForgotPassword />}></Route> */}
-          {/* <Route path='/resetPassword/:token' element={<ResetPassword />}></Route> */}
-          <Route path='/privacy' element={<Privacy />}></Route>
-          <Route path='/about' element={<About/>}></Route>
-          <Route path='/terms' element={<Terms/>}></Route>
-          <Route path='/help' element={<Help/>}></Route>
-          <Route path='*' element={<Notfound />}></Route>
+          <Route path='/' element={user ? <Home /> : <Login />} />
+          <Route path='/login' element={user ? <Navigate to="/" /> : <Login />} />
+          <Route path='/signup' element={user ? <Navigate to="/" /> : <Signup />} />
+          <Route path='/profile/:username' element={user ? <Profile /> : <Login />} />
+          <Route path='/chat' element={user ? <Messenger /> : <Login />} />
+          <Route path='/details' element={<Details />} />
+          {/* <Route path='/forgotPassword' element={<ForgotPassword />} /> */}
+          {/* <Route path='/resetPassword/:token' element={<ResetPassword />} /> */}
+          <Route path='/privacy' element={<Privacy />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/terms' element={<Terms />} />
+          <Route path='/help' element={<Help />} />
+          <Route path='*' element={<Notfound />} />
         </Routes>
       </Router>
       <ToastContainer
@@ -69,7 +66,7 @@ function App() {
         progressClassName="!bg-gray-800"
       />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
