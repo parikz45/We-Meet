@@ -5,7 +5,11 @@ const User = require("../Models/User");
 
 // Create a post
 router.post('/', async (req, res) => {
-    const newPost = new Post(req.body);
+    const newPost = new Post({
+        userId: req.user.id,
+        desc: req.body.desc,
+        img: req.body.img,
+    });
     try {
         const savedPost = await newPost.save();
         res.status(200).json(savedPost);
@@ -16,31 +20,32 @@ router.post('/', async (req, res) => {
 
 // Update a post
 router.put("/:id", async (req, res) => {
-    const post = await Post.findById(req.params.id);
     try {
-        if (req.body.userId === post.userId) {
-            await post.updateOne({ $set: req.body });
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json("Post not found");
+        if (post.userId === req.user.id) {
+            await post.updateOne({ $set: { desc: req.body.desc, img: req.body.img } });
             res.status(200).json("Post has been updated");
         }
         else {
-            res.status(500).json("you can update only your posts");
+            res.status(403).json("you can update only your posts");
         }
     } catch (err) {
-        res.status(402).json(err);
+        res.status(500).json(err);
     }
 })
 
 // Delete a post
 router.delete("/:id", async (req, res) => {
-    
     try {
         const post = await Post.findById(req.params.id);
-        if (req.body.userId === post.userId) {
+        if (!post) return res.status(404).json("Post not found");
+        if (post.userId === req.user.id) {
             await post.deleteOne();
             res.status(200).json("Post has been deleted");
         }
         else {
-            res.status(500).json("you can delete only your posts");
+            res.status(403).json("you can delete only your posts");
         }
     } catch (err) {
         res.status(500).json(err);
@@ -51,11 +56,11 @@ router.delete("/:id", async (req, res) => {
 router.put("/:id/like", async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-        if (!post.likes.includes(req.body.userId)) {
-            await post.updateOne({ $push: { likes: req.body.userId } });
+        if (!post.likes.includes(req.user.id)) {
+            await post.updateOne({ $push: { likes: req.user.id } });
             res.status(200).json("Post has been liked");
         } else {
-            await post.updateOne({ $pull: { likes: req.body.userId } });
+            await post.updateOne({ $pull: { likes: req.user.id } });
             res.status(200).json("Post has been disliked");
         }
     } catch (err) {

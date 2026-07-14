@@ -3,7 +3,7 @@ const Messages = require('../Models/Message');
 
 // add
 router.post("/", async (req, res) => {
-  const newMessage = new Messages(req.body);
+  const newMessage = new Messages({ ...req.body, sender: req.user.id });
   try {
     const savedMessage = await newMessage.save();
     res.status(200).json(savedMessage);
@@ -37,7 +37,7 @@ router.get("/:conversationId", async (req, res) => {
 router.delete("/:messageId", async (req, res) => {
   try {
     const message = await Messages.findById(req.params.messageId);
-    if (message.sender !== req.body.userId) {
+    if (String(message.sender) !== req.user.id) {
       return res.status(403).json("You can delete only your own messages");
     }
     await message.deleteOne();
@@ -65,7 +65,7 @@ router.put("/seen/:id", async (req, res) => {
 router.put("/seen/conversation/:conversationId", async (req, res) => {
   try {
     await Messages.updateMany(
-      { conversationId: req.params.conversationId, receiver: req.body.userId, isSeen: false },
+      { conversationId: req.params.conversationId, receiver: req.user.id, isSeen: false },
       { $set: { isSeen: true } }
     );
     res.status(200).json("All messages marked as seen");

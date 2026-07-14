@@ -55,7 +55,6 @@ function Post({ post, onDelete }) {
       await axios.delete(`https://we-meet-1-h00i.onrender.com/api/posts/${post._id}`, {
         data: { userId: currentUser._id },
       });
-      toast.success("Post deleted successfully!");
       onDelete(post._id);
     } catch (err) {
       console.log(err);

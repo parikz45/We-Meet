@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useEffect } from "react";
+import React, { useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginCalls } from "../../apicalls";
 import { AuthContext } from "../../context/AuthContext";
@@ -9,22 +9,18 @@ function Login() {
   const navigate = useNavigate();
   const email = useRef();
   const password = useRef();
-  const { isFetching, error, dispatch } = useContext(AuthContext);
+  const { isFetching, dispatch } = useContext(AuthContext);
 
-  useEffect(() => {
-    if (error) {
-      toast.error("Login failed. Please check your credentials.");
-    }
-  }, [error]);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    loginCalls(
+    const user = await loginCalls(
       { email: email.current.value, password: password.current.value },
       dispatch
     );
-    if (!isFetching && !error) {
+    if (user) {
       toast.success("Logged in successfully!");
+    } else {
+      toast.error("Login failed. Please check your credentials.");
     }
   };
 

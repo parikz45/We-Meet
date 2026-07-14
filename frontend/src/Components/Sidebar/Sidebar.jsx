@@ -24,7 +24,6 @@ function Sidebar() {
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
     navigate("/login");
-    toast.success("Logged out successfully!", { icon: "👋" });
   };
 
   const notify = () => toast("You have no new notifications!", { icon: "🔔" });

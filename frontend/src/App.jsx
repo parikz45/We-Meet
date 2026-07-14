@@ -44,7 +44,7 @@ function App() {
           <Route path='/signup' element={user ? <Navigate to="/" /> : <Signup />} />
           <Route path='/profile/:username' element={user ? <Profile /> : <Login />} />
           <Route path='/chat' element={user ? <Messenger /> : <Login />} />
-          <Route path='/details' element={<Details />} />
+          <Route path='/details' element={user ? <Details /> : <Login />} />
           {/* <Route path='/forgotPassword' element={<ForgotPassword />} /> */}
           {/* <Route path='/resetPassword/:token' element={<ResetPassword />} /> */}
           <Route path='/privacy' element={<Privacy />} />
