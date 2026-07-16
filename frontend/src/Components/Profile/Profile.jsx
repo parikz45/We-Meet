@@ -25,7 +25,13 @@ function Profile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+<<<<<<< HEAD
         const res = await axios.get(`${API}/api/users?username=${userName}`);
+=======
+        const res = await axios.get(
+          `https://we-meet-9jye.onrender.com/api/users?username=${userName}`
+        );
+>>>>>>> upstream/main
         setUser(res.data);
         setFollowing(currentUser.followings?.includes(res.data._id) || false);
       } catch (err) {
@@ -55,10 +61,17 @@ function Profile() {
     data.append("file", file);
 
     try {
+<<<<<<< HEAD
       const response = await axios.post(`${API}/api/upload`, data);
       const filename = response.data.filename;
 
       await axios.put(`${API}/api/users/${user._id}`, {
+=======
+      const response = await axios.post("https://we-meet-9jye.onrender.com/api/upload", data);
+      const imgPreview = response.data.filename;
+
+      await axios.put(`https://we-meet-9jye.onrender.com/api/users/${user._id}`, {
+>>>>>>> upstream/main
         userId: currentUser._id,
         [field]: filename,
       });

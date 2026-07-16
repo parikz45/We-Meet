@@ -36,7 +36,7 @@ function Messenger() {
         const getChatUser = async () => {
             if (!currentChat) return;
             const friendId = currentChat.members.find((m) => m !== user._id);
-            const res = await axios.get(`https://we-meet-1-h00i.onrender.com/api/users?userId=${friendId}`);
+            const res = await axios.get(`https://we-meet-9jye.onrender.com/api/users?userId=${friendId}`);
             setChatUser(res.data);
         };
         getChatUser();
@@ -47,7 +47,7 @@ function Messenger() {
         const fetchSender = async () => {
             if (replyMessage) {
                 try {
-                    const res = await axios.get(`https://we-meet-1-h00i.onrender.com/api/users?userId=${replyMessage.sender}`);
+                    const res = await axios.get(`https://we-meet-9jye.onrender.com/api/users?userId=${replyMessage.sender}`);
                     setReplySender(res.data.username);
                 } catch (err) {
                     console.error("Error fetching sender", err);
@@ -64,7 +64,7 @@ function Messenger() {
         const getFriends = async () => {
             if (!user._id) return;
             try {
-                const friendList = await axios.get(`https://we-meet-1-h00i.onrender.com/api/users/friends/${user._id}`);
+                const friendList = await axios.get(`https://we-meet-9jye.onrender.com/api/users/friends/${user._id}`);
                 setFriends(friendList.data);
             } catch (err) {
                 console.error("Error fetching friends:", err.response?.data || err.message);
@@ -77,7 +77,7 @@ function Messenger() {
     useEffect(() => {
         const getConversations = async () => {
             try {
-                const res = await axios.get("https://we-meet-1-h00i.onrender.com/api/conversations/" + user._id);
+                const res = await axios.get("https://we-meet-9jye.onrender.com/api/conversations/" + user._id);
                 setConversations(res.data);
             } catch (err) {
                 console.log(err);
@@ -90,7 +90,7 @@ function Messenger() {
     useEffect(() => {
         const getMessages = async () => {
             try {
-                const response = await axios.get("https://we-meet-1-h00i.onrender.com/api/messages/" + currentChat?._id);
+                const response = await axios.get("https://we-meet-9jye.onrender.com/api/messages/" + currentChat?._id);
                 setMessages(response.data);
             } catch (err) {
                 console.log(err);
@@ -115,12 +115,12 @@ function Messenger() {
             if (file) {
                 const data = new FormData();
                 data.append("file", file);
-                const response = await axios.post("https://we-meet-1-h00i.onrender.com/api/upload/", data);
+                const response = await axios.post("https://we-meet-9jye.onrender.com/api/upload/", data);
                 message.image = response.data.filename;
             }
 
             // send message to backend
-            const res = await axios.post("https://we-meet-1-h00i.onrender.com/api/messages/", message);
+            const res = await axios.post("https://we-meet-9jye.onrender.com/api/messages/", message);
 
             // send message via socket to receiver
             socket.current.emit("sendMessage", {
@@ -165,7 +165,7 @@ function Messenger() {
             setCurrentChat(existing);
         } else {
             try {
-                const res = await axios.post("https://we-meet-1-h00i.onrender.com/api/conversations", {
+                const res = await axios.post("https://we-meet-9jye.onrender.com/api/conversations", {
                     senderId: user._id,
                     recieverId: friend._id
                 });

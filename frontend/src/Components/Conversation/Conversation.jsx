@@ -18,7 +18,7 @@ function Conversation({ message, self, onReply }) {
         const getData = async () => {
             try {
                 const res = await axios.get(
-                    `https://we-meet-1-h00i.onrender.com/api/users?userId=${message.sender}`
+                    `https://we-meet-9jye.onrender.com/api/users?userId=${message.sender}`
                 );
                 setSenderData(res.data);
             } catch (err) {
@@ -30,7 +30,7 @@ function Conversation({ message, self, onReply }) {
 
     const deleteSelectedMsg = async () => {
         try {
-            await axios.delete(`https://we-meet-1-h00i.onrender.com/api/messages/${message._id}`, {
+            await axios.delete(`https://we-meet-9jye.onrender.com/api/messages/${message._id}`, {
                 data: { userId: user._id },
             });
             setShowDelete(false);
@@ -75,7 +75,7 @@ function Conversation({ message, self, onReply }) {
                     <audio
                         controls
                         className="mt-2 w-full"
-                        src={`https://we-meet-1-h00i.onrender.com/api/messages/audio/${message.audio}`}
+                        src={`https://we-meet-9jye.onrender.com/api/messages/audio/${message.audio}`}
                     />
                 )}
 

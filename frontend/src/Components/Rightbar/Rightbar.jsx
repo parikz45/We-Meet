@@ -12,7 +12,7 @@ function Rightbar({ user }) {
       if (!user?._id) return;
       try {
         const friendList = await axios.get(
-          `https://we-meet-1-h00i.onrender.com/api/users/friends/${user._id}`
+          `https://we-meet-9jye.onrender.com/api/users/friends/${user._id}`
         );
         setFriends(friendList.data || []);
       } catch (err) {

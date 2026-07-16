@@ -11,7 +11,7 @@ function Online({ conversation, currentUser, onlineUsers = [] }) {
         const friendId = conversation.members.find((m) => m !== currentUser._id);
         const getUser = async () => {
             try {
-                const res = await axios.get("https://we-meet-1-h00i.onrender.com/api/users?userId=" + friendId);
+                const res = await axios.get("https://we-meet-9jye.onrender.com/api/users?userId=" + friendId);
                 setUser(res.data);
             } catch (err) {
                 console.log(err);
