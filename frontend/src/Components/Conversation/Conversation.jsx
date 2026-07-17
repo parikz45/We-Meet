@@ -47,7 +47,7 @@ function Conversation({ message, self, onReply }) {
   ${self
                         ? message.image
                             ? "bg-white text-gray-900 shadow ring-1 ring-black/5"
-                            : "bg-blue-500 text-white"
+                            : "bg-indigo-600 text-white"
                         : "bg-gray-100 text-gray-800"
                     }
   ${message.image ? "p-2" : "px-4 py-2.5"}
@@ -89,7 +89,7 @@ function Conversation({ message, self, onReply }) {
                         className={`absolute -left-5 top-1/2 -translate-y-1/2
               w-4 h-4 rounded-full border-2 flex items-center justify-center
               transition opacity-0 group-hover:opacity-100
-              ${selected ? "border-blue-500 bg-blue-500" : "border-gray-300 bg-white"}
+              ${selected ? "border-indigo-600 bg-indigo-600" : "border-gray-300 bg-white"}
             `}
                     >
                         {selected && <span className="w-2 h-2 bg-white rounded-full" />}

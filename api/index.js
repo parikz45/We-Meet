@@ -9,6 +9,7 @@ const dotenv = require("dotenv");
 const multer = require("multer");
 const path = require("path");
 const Message = require("./Models/Message");
+const verifyToken = require("./middleware/verifyToken");
 
 // Load routes
 const userRoute = require('./routes/user');
@@ -35,6 +36,9 @@ const allowedOrigins = [
   "https://we-meet-9jye.onrender.com"
 ];
 
+// Trust the Render/Vercel proxy so client IPs (used by rate limiting) are correct.
+app.set("trust proxy", 1);
+
 // Middleware
 app.use(express.json());
 app.use(helmet());
@@ -56,25 +60,36 @@ app.use(
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use("/api/messages/audio", express.static(path.join(__dirname, "public/audios")));
 
-// Routes
-app.use("/api/users", userRoute);
+// Routes (auth is public; everything else requires a valid token)
 app.use("/api/auth", authRoute);
-app.use("/api/posts", postRoute);
-app.use("/api/messages", messageRoute);
-app.use("/api/conversations", conversationRoute);
-app.use("/api/notifications", notificationRoute);
+app.use("/api/users", verifyToken, userRoute);
+app.use("/api/posts", verifyToken, postRoute);
+app.use("/api/messages", verifyToken, messageRoute);
+app.use("/api/conversations", verifyToken, conversationRoute);
+app.use("/api/notifications", verifyToken, notificationRoute);
 
 // Multer Config (images)
+// Strip path separators from the client-supplied filename to avoid traversal.
+const safeName = (name) =>
+  Date.now() + "-" + path.basename(name).replace(/[^a-zA-Z0-9._-]/g, "_");
+
 const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "public/images"));
   },
   filename: (req, file, cb) => {
-    const uniqueName = Date.now() + "-" + file.originalname;
-    cb(null, uniqueName);
+    cb(null, safeName(file.originalname));
   }
 });
-const upload = multer({ storage: imageStorage });
+const imageFilter = (req, file, cb) => {
+  if (/^image\/(jpe?g|png|gif|webp)$/.test(file.mimetype)) cb(null, true);
+  else cb(new Error("Only image files are allowed"));
+};
+const upload = multer({
+  storage: imageStorage,
+  fileFilter: imageFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+});
 
 // Multer Config (audio)
 const audioStorage = multer.diskStorage({
@@ -82,14 +97,21 @@ const audioStorage = multer.diskStorage({
     cb(null, path.join(__dirname, "public/audios"));
   },
   filename: (req, file, cb) => {
-    const uniqueName = Date.now() + "-" + file.originalname;
-    cb(null, uniqueName);
+    cb(null, safeName(file.originalname));
   }
 });
-const Upload = multer({ storage: audioStorage });
+const audioFilter = (req, file, cb) => {
+  if (/^audio\//.test(file.mimetype)) cb(null, true);
+  else cb(new Error("Only audio files are allowed"));
+};
+const Upload = multer({
+  storage: audioStorage,
+  fileFilter: audioFilter,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+});
 
 // Upload Routes
-app.post("/api/upload", upload.single("file"), (req, res) => {
+app.post("/api/upload", verifyToken, upload.single("file"), (req, res) => {
   try {
     console.log("File uploaded:", req.file);
     return res.status(200).json({ filename: req.file.filename });
@@ -99,14 +121,14 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   }
 });
 
-app.post("/api/messages/audio", Upload.single("audio"), async (req, res) => {
-  if (!req.file || !req.body.sender || !req.body.conversationId) {
+app.post("/api/messages/audio", verifyToken, Upload.single("audio"), async (req, res) => {
+  if (!req.file || !req.body.conversationId) {
     return res.status(400).json("Missing file or metadata");
   }
 
   try {
     const newMsg = new Message({
-      sender: req.body.sender,
+      sender: req.user.id,
       conversationId: req.body.conversationId,
       audio: req.file.filename,
     });
@@ -115,6 +137,12 @@ app.post("/api/messages/audio", Upload.single("audio"), async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
+});
+
+// Central error handler (multer rejections, etc.) — always respond with JSON.
+app.use((err, req, res, next) => {
+  console.error("Error:", err.message);
+  res.status(err.status || 400).json(err.message || "Something went wrong");
 });
 
 // MongoDB Connect

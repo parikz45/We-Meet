@@ -4,21 +4,22 @@ const UserSchema=new mongoose.Schema({
     username:{
         type:String,
         required:true,
-        min:5,
-        max:20,
-        unique:true
+        minlength:3,
+        maxlength:30,
+        unique:true,
+        trim:true,
     },
     email:{
         type:String,
         required:true,
-        min:5,
-        max:30,
-        unique:true
+        maxlength:60,
+        unique:true,
+        lowercase:true,
+        trim:true,
     },
     password:{
         type:String,
         required:true,
-        min:8,
     },
     profilePicture:{
         type:String,
@@ -58,7 +59,7 @@ const UserSchema=new mongoose.Schema({
     resetPasswordToken:{
         type:String,
     },
-    resetPasswordExpire:{
+    resetPasswordExpires:{
         type:Date,
     },
 },

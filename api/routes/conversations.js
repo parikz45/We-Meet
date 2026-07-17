@@ -4,7 +4,7 @@ const Conversation = require("../Models/Conversation");
 // new conversation
 router.post("/", async(req,res)=>{
     const newConversation=new Conversation({
-        members:[req.body.senderId, req.body.recieverId]
+        members:[req.user.id, req.body.recieverId]
     });
     try{    
         const savedConversation=await newConversation.save();

@@ -2,28 +2,48 @@ const router = require("express").Router();
 const User = require("../Models/User");
 const bcryptjs = require("bcryptjs");
 
+// Fields a user is allowed to change on their own profile.
+const ALLOWED_UPDATES = [
+    "username",
+    "email",
+    "profilePicture",
+    "coverPicture",
+    "desc",
+    "city",
+    "state",
+    "relationship",
+];
+
 // update user
 router.put("/:id", async (req, res) => {
-    if (req.body.userId === req.params.id) {
-        try {
-            const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-                $set: req.body,
-            }, { new: true }); 
-            res.status(200).json("Account has been updated");
-        } catch (err) {
-            res.status(500).json(err);
+    if (req.user.id !== req.params.id && !req.user.isAdmin) {
+        return res.status(403).json("You can only update your own account");
+    }
+    try {
+        // Whitelist fields to prevent mass-assignment (e.g. isAdmin, password).
+        const updates = {};
+        for (const key of ALLOWED_UPDATES) {
+            if (req.body[key] !== undefined) updates[key] = req.body[key];
         }
-    } else {
-        res.status(403).json("You can only update your own account");
+
+        if (req.body.password) {
+            const salt = await bcryptjs.genSalt(10);
+            updates.password = await bcryptjs.hash(req.body.password, salt);
+        }
+
+        await User.findByIdAndUpdate(req.params.id, { $set: updates });
+        res.status(200).json("Account has been updated");
+    } catch (err) {
+        res.status(500).json(err);
     }
 });
 
 
 // delete user
 router.delete("/:id", async (req, res) => {
-    if (req.body.userId === req.params.id || req.body.isAdmin) {
+    if (req.user.id === req.params.id || req.user.isAdmin) {
         try {
-            const user = await User.findByIdAndDelete(req.params.id);
+            await User.findByIdAndDelete(req.params.id);
             res.status(200).json("Account has been deleted");
         } catch (err) {
             return res.status(500).json(err);
@@ -81,12 +101,12 @@ router.get("/friends/:userId", async (req, res) => {
 
 // follow a user
 router.put("/:id/follow", async (req, res) => {
-    if (req.body.userId !== req.params.id) {
+    if (req.user.id !== req.params.id) {
         try {
             const user = await User.findById(req.params.id);
-            const currentUser = await User.findById(req.body.userId);
-            if (!user.followers.includes(req.body.userId)) {
-                await user.updateOne({ $push: { followers: req.body.userId } });
+            const currentUser = await User.findById(req.user.id);
+            if (!user.followers.includes(req.user.id)) {
+                await user.updateOne({ $push: { followers: req.user.id } });
                 await currentUser.updateOne({ $push: { followings: req.params.id } });
                 res.status(200).json("User has been followed");
             }
@@ -98,18 +118,18 @@ router.put("/:id/follow", async (req, res) => {
         }
     }
     else {
-        res.status(402).json("You cannot follow yourself");
+        res.status(400).json("You cannot follow yourself");
     }
 });
 
 // unfollow a user
 router.put("/:id/unfollow", async (req, res) => {
-    if (req.body.userId !== req.params.id) {
+    if (req.user.id !== req.params.id) {
         try {
             const user = await User.findById(req.params.id);
-            const currentUser = await User.findById(req.body.userId);
-            if (user.followers.includes(req.body.userId)) {
-                await user.updateOne({ $pull: { followers: req.body.userId } });
+            const currentUser = await User.findById(req.user.id);
+            if (user.followers.includes(req.user.id)) {
+                await user.updateOne({ $pull: { followers: req.user.id } });
                 await currentUser.updateOne({ $pull: { followings: req.params.id } });
                 res.status(200).json("User has been unfollowed");
             }
@@ -121,7 +141,7 @@ router.put("/:id/unfollow", async (req, res) => {
         }
     }
     else {
-        res.status(402).json("You cannot unfollow yourself");
+        res.status(400).json("You cannot unfollow yourself");
     }
 });
 

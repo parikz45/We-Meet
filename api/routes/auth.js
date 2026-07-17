@@ -2,12 +2,31 @@ const router = require("express").Router();
 const User = require("../Models/User");
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
+const rateLimit = require("express-rate-limit");
 const { sendMail } = require("../utils/nodemailer");
+
+// Throttle sensitive auth endpoints to slow brute-force / email-spam attempts.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: "Too many attempts, please try again later",
+});
+
+// Sign a short-lived access token for a user document.
+const generateToken = (user) =>
+  jwt.sign(
+    { id: user._id, isAdmin: user.isAdmin },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "7d" }
+  );
 
 // ==========================
 // REGISTER
 // ==========================
-router.post("/register", async (req, res) => {
+router.post("/register", authLimiter, async (req, res) => {
   try {
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(req.body.password, salt);
@@ -19,7 +38,9 @@ router.post("/register", async (req, res) => {
     });
 
     const user = await newUser.save();
-    res.status(200).json(user);
+    const token = generateToken(user);
+    const { password, ...other } = user._doc;
+    res.status(200).json({ ...other, token });
   } catch (err) {
     console.error("❌ Registration error:", err);
     res.status(500).json("Registration failed");
@@ -29,7 +50,7 @@ router.post("/register", async (req, res) => {
 // ==========================
 // LOGIN
 // ==========================
-router.post("/login", async (req, res) => {
+router.post("/login", authLimiter, async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(404).json("User not found");
@@ -37,7 +58,9 @@ router.post("/login", async (req, res) => {
     const validPassword = await bcryptjs.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).json("Wrong password");
 
-    res.status(200).json(user);
+    const token = generateToken(user);
+    const { password, ...other } = user._doc;
+    res.status(200).json({ ...other, token });
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res.status(500).json("Internal Server Error");
@@ -47,7 +70,7 @@ router.post("/login", async (req, res) => {
 // ==========================
 // FORGOT PASSWORD
 // ==========================
-router.post("/forgot-password", async (req, res) => {
+router.post("/forgot-password", authLimiter, async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
 

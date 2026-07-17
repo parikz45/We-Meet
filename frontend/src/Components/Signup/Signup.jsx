@@ -13,29 +13,28 @@ function Signup() {
 
   const handleClick = async (e) => {
     e.preventDefault();
-    passwordAgain.current.setCustomValidity("");
 
     if (password.current.value !== passwordAgain.current.value) {
-      passwordAgain.current.setCustomValidity("The passwords do not match");
-    } else {
-      const user = {
-        username: username.current.value,
-        email: email.current.value,
-        password: password.current.value,
-      };
+      toast.error("Passwords do not match");
+      return;
+    }
 
-      try {
-        const res = await axios.post(
-          "https://we-meet-9jye.onrender.com/api/auth/register",
-          user
-        );
-        localStorage.setItem("user", JSON.stringify(res.data));
-        toast.success("Registration successful!");
-        navigate("/details");
-      } catch (err) {
-        console.log(err);
-        toast.error("Registration failed!");
-      }
+    const user = {
+      username: username.current.value,
+      email: email.current.value,
+      password: password.current.value,
+    };
+
+    try {
+      const res = await axios.post(
+        "https://we-meet-9jye.onrender.com/api/auth/register",
+        user
+      );
+      localStorage.setItem("user", JSON.stringify(res.data));
+      navigate("/details");
+    } catch (err) {
+      console.log(err);
+      toast.error("Registration failed!");
     }
   };
 
