@@ -19,7 +19,6 @@ function Signup() {
       return;
     }
 
-<<<<<<< HEAD
     const user = {
       username: username.current.value,
       email: email.current.value,
@@ -28,7 +27,7 @@ function Signup() {
 
     try {
       const res = await axios.post(
-        "https://we-meet-1-h00i.onrender.com/api/auth/register",
+        "https://we-meet-9jye.onrender.com/api/auth/register",
         user
       );
       localStorage.setItem("user", JSON.stringify(res.data));
@@ -36,20 +35,6 @@ function Signup() {
     } catch (err) {
       console.log(err);
       toast.error("Registration failed!");
-=======
-      try {
-        const res = await axios.post(
-          "https://we-meet-9jye.onrender.com/api/auth/register",
-          user
-        );
-        localStorage.setItem("user", JSON.stringify(res.data));
-        toast.success("Registration successful!");
-        navigate("/details");
-      } catch (err) {
-        console.log(err);
-        toast.error("Registration failed!");
-      }
->>>>>>> upstream/main
     }
   };
 

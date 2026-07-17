@@ -3,7 +3,7 @@ import axios from "axios";
 // Dev convenience: the app's API URLs are hardcoded to the production backend.
 // To exercise the LOCAL backend instead, set VITE_LOCAL_API=true in frontend/.env
 // and restart the dev server. Default (unset) keeps requests going to production.
-const PROD_API = "https://we-meet-1-h00i.onrender.com";
+const PROD_API = "https://we-meet-9jye.onrender.com";
 const DEV_API = "http://localhost:8800";
 axios.interceptors.request.use((config) => {
   if (import.meta.env.DEV && import.meta.env.VITE_LOCAL_API === "true" && config.url) {

@@ -4,7 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { Edit } from "@mui/icons-material";
 
-const API = "https://we-meet-1-h00i.onrender.com";
+const API = "https://we-meet-9jye.onrender.com";
 
 function ProfileRight({ user }) {
   const navigate = useNavigate();
@@ -17,13 +17,7 @@ function ProfileRight({ user }) {
     const getFriends = async () => {
       if (!user?._id) return;
       try {
-<<<<<<< HEAD
         const res = await axios.get(`${API}/api/users/friends/${user._id}`);
-=======
-        const res = await axios.get(
-          `https://we-meet-9jye.onrender.com/api/users/friends/${user._id}`
-        );
->>>>>>> upstream/main
         setFriends(res.data || []);
       } catch (err) {
         console.error(err);
@@ -32,32 +26,6 @@ function ProfileRight({ user }) {
     getFriends();
   }, [user?._id]);
 
-<<<<<<< HEAD
-=======
-
-  // Follow / Unfollow
-  const handleFollow = async () => {
-    try {
-      if (following) {
-        await axios.put(
-          `https://we-meet-9jye.onrender.com/api/users/${user._id}/unfollow`,
-          { userId: currentUser._id }
-        );
-        dispatch({ type: "UNFOLLOW", payload: user._id });
-      } else {
-        await axios.put(
-          `https://we-meet-9jye.onrender.com/api/users/${user._id}/follow`,
-          { userId: currentUser._id }
-        );
-        dispatch({ type: "FOLLOW", payload: user._id });
-      }
-      setFollowing(!following);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
->>>>>>> upstream/main
   return (
     <aside className="flex flex-col gap-6">
       {/* PERSONAL INFO CARD */}
