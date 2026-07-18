@@ -10,6 +10,7 @@ const multer = require("multer");
 const path = require("path");
 const Message = require("./Models/Message");
 const verifyToken = require("./middleware/verifyToken");
+const { uploadToCloudinary } = require("./utils/cloudinary");
 
 // Load routes
 const userRoute = require('./routes/user');
@@ -68,69 +69,54 @@ app.use("/api/messages", verifyToken, messageRoute);
 app.use("/api/conversations", verifyToken, conversationRoute);
 app.use("/api/notifications", verifyToken, notificationRoute);
 
-// Multer Config (images)
-// Strip path separators from the client-supplied filename to avoid traversal.
-const safeName = (name) =>
-  Date.now() + "-" + path.basename(name).replace(/[^a-zA-Z0-9._-]/g, "_");
-
-const imageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "public/images"));
+// Files are held in memory then streamed to Cloudinary (Render's disk is
+// ephemeral, so local uploads don't survive redeploys).
+const imageUpload = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    if (/^image\/(jpe?g|png|gif|webp)$/.test(file.mimetype)) cb(null, true);
+    else cb(new Error("Only image files are allowed"));
   },
-  filename: (req, file, cb) => {
-    cb(null, safeName(file.originalname));
-  }
-});
-const imageFilter = (req, file, cb) => {
-  if (/^image\/(jpe?g|png|gif|webp)$/.test(file.mimetype)) cb(null, true);
-  else cb(new Error("Only image files are allowed"));
-};
-const upload = multer({
-  storage: imageStorage,
-  fileFilter: imageFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
 });
-
-// Multer Config (audio)
-const audioStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "public/audios"));
+const audioUpload = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    if (/^audio\//.test(file.mimetype)) cb(null, true);
+    else cb(new Error("Only audio files are allowed"));
   },
-  filename: (req, file, cb) => {
-    cb(null, safeName(file.originalname));
-  }
-});
-const audioFilter = (req, file, cb) => {
-  if (/^audio\//.test(file.mimetype)) cb(null, true);
-  else cb(new Error("Only audio files are allowed"));
-};
-const Upload = multer({
-  storage: audioStorage,
-  fileFilter: audioFilter,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
 });
 
-// Upload Routes
-app.post("/api/upload", verifyToken, upload.single("file"), (req, res) => {
+// Upload Routes — return the permanent Cloudinary URL as `filename`.
+app.post("/api/upload", verifyToken, imageUpload.single("file"), async (req, res) => {
   try {
-    console.log("File uploaded:", req.file);
-    return res.status(200).json({ filename: req.file.filename });
+    if (!req.file) return res.status(400).json("No file uploaded");
+    const result = await uploadToCloudinary(req.file.buffer, {
+      folder: "wemeet/images",
+      resource_type: "image",
+    });
+    return res.status(200).json({ filename: result.secure_url });
   } catch (err) {
     console.error("Upload error:", err);
     return res.status(500).json("Upload failed");
   }
 });
 
-app.post("/api/messages/audio", verifyToken, Upload.single("audio"), async (req, res) => {
+app.post("/api/messages/audio", verifyToken, audioUpload.single("audio"), async (req, res) => {
   if (!req.file || !req.body.conversationId) {
     return res.status(400).json("Missing file or metadata");
   }
 
   try {
+    const result = await uploadToCloudinary(req.file.buffer, {
+      folder: "wemeet/audio",
+      resource_type: "video", // Cloudinary handles audio under the video pipeline
+    });
     const newMsg = new Message({
       sender: req.user.id,
       conversationId: req.body.conversationId,
-      audio: req.file.filename,
+      audio: result.secure_url,
     });
     const saved = await newMsg.save();
     res.status(200).json(saved);

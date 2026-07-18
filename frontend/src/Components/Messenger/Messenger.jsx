@@ -8,6 +8,7 @@ import axios from "axios";
 import EmojiPicker from 'emoji-picker-react';
 import { io } from "socket.io-client";
 import AudioRecorder from './audio';
+import { media } from "../../utils/media";
 
 function Messenger() {
     const { user } = useContext(AuthContext);
@@ -28,8 +29,6 @@ function Messenger() {
     const emojiPickerRef = useRef();
     const emojiIconRef = useRef();
     const socket = useRef();
-    const PF = import.meta.env.VITE_PUBLIC_FOLDER;
-    // at top of Messenger.jsx
     const [chatUser, setChatUser] = useState(null);
 
     useEffect(() => {
@@ -282,8 +281,8 @@ function Messenger() {
                                             <img
                                                 src={
                                                     friend.profilePicture
-                                                        ? PF + friend.profilePicture
-                                                        : PF + "profile.jpg"
+                                                        ? media(friend.profilePicture)
+                                                        : media("profile.jpg")
                                                 }
                                                 className="w-11 h-11 rounded-full object-cover ring-2 ring-transparent group-hover:ring-indigo-400 transition"
                                                 alt=""
@@ -337,7 +336,7 @@ function Messenger() {
                             <div className="flex items-center gap-3">
                                 <div className="relative">
                                     <img
-                                        src={chatUser.profilePicture ? PF + chatUser.profilePicture : PF + "profile.jpg"}
+                                        src={chatUser.profilePicture ? media(chatUser.profilePicture) : media("profile.jpg")}
                                         alt="avatar"
                                         className="w-11 h-11 rounded-full object-cover"
                                     />

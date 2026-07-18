@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { media } from "../../utils/media";
 
 function Rightbar({ user }) {
-  const PF = import.meta.env.VITE_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
   const navigate = useNavigate();
 
@@ -64,8 +64,8 @@ function Rightbar({ user }) {
                       className="w-13 h-13 rounded-full object-cover transition-transform duration-200 group-hover:scale-105"
                       src={
                         friend.profilePicture
-                          ? PF + friend.profilePicture
-                          : PF + "1.jpeg"
+                          ? media(friend.profilePicture)
+                          : media("1.jpeg")
                       }
                       alt={friend.username}
                     />

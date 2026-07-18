@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { Edit } from "@mui/icons-material";
+import { media } from "../../utils/media";
 
 const API = "https://we-meet-9jye.onrender.com";
 
 function ProfileRight({ user }) {
   const navigate = useNavigate();
-  const PF = import.meta.env.VITE_PUBLIC_FOLDER;
   const { user: currentUser } = useContext(AuthContext);
 
   const [friends, setFriends] = useState([]);
@@ -71,8 +71,8 @@ function ProfileRight({ user }) {
                   <img
                     src={
                       friend.profilePicture
-                        ? PF + friend.profilePicture
-                        : PF + "profile.jpg"
+                        ? media(friend.profilePicture)
+                        : media("profile.jpg")
                     }
                     alt={friend.username}
                     className="w-11 h-11 rounded-full object-cover group-hover:scale-105 transition"

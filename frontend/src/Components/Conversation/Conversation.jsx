@@ -4,9 +4,9 @@ import { AuthContext } from "../../context/AuthContext";
 import { DeleteOutline } from "@mui/icons-material";
 import ConfirmDialog from "../ConfirmDialogue/confirmDialogue";
 import ImageViewer from "../ImageViewer/imageviewer";
+import { media } from "../../utils/media";
 
 function Conversation({ message, self, onReply }) {
-    const PF = import.meta.env.VITE_PUBLIC_FOLDER;
     const { user } = useContext(AuthContext);
 
     const [senderData, setSenderData] = useState(null);
@@ -57,7 +57,7 @@ function Conversation({ message, self, onReply }) {
                 {/* IMAGE */}
                 {message.image && (
                     <img
-                        src={PF + message.image}
+                        src={media(message.image)}
                         onClick={(e) => {
                             e.stopPropagation();
                             setViewerOpen(true);
@@ -75,7 +75,7 @@ function Conversation({ message, self, onReply }) {
                     <audio
                         controls
                         className="mt-2 w-full"
-                        src={`https://we-meet-9jye.onrender.com/api/messages/audio/${message.audio}`}
+                        src={media(message.audio)}
                     />
                 )}
 
@@ -128,7 +128,7 @@ function Conversation({ message, self, onReply }) {
             {message.image && (
                 <ImageViewer
                     open={viewerOpen}
-                    src={PF + message.image}
+                    src={media(message.image)}
                     onClose={() => setViewerOpen(false)}
                 />
             )}
