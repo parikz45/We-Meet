@@ -17,7 +17,7 @@ It combines the features of a modern social platform with live communication too
 - 👤 User profiles with posts and details  
 - 📰 Feed with posts from followed users  
 - 💬 Real-time chat with text and audio messages (via Socket.IO)  
-- 🖼 Media upload (images, audio) with Multer (type + size validated)  
+- 🖼 Media upload (images, audio) to **Cloudinary** (type + size validated)  
 - 🔔 Notifications system  
 - 📱 Responsive UI built with React + Tailwind + MUI  
 
@@ -34,7 +34,7 @@ It combines the features of a modern social platform with live communication too
 - 🚀 Express.js, Mongoose  
 - 🔑 **jsonwebtoken** (JWT auth) + **bcryptjs** (password hashing)  
 - 🚦 **express-rate-limit** (brute-force protection on auth routes)  
-- 📦 Multer (file uploads, with MIME/size limits)  
+- 📦 Multer (in-memory) + **Cloudinary** (persistent media storage)  
 - 🛡 Helmet & CORS (security)  
 - 📜 Morgan (logging)  
 
@@ -115,6 +115,10 @@ We-Meet/
    FRONTEND_URL=http://localhost:5173
    EMAIL=your_gmail_address           # only needed for password-reset emails
    EMAIL_PASS=your_gmail_app_password # only needed for password-reset emails
+   # Cloudinary (media storage) — from your Cloudinary dashboard
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
    ```
    Run backend:
    ```bash
@@ -169,8 +173,8 @@ We-Meet/
 | GET    | `/api/posts/timeline/:userId` | ✅ | Get timeline posts    |
 | POST   | `/api/conversations`    |  ✅  | Start a new conversation |
 | GET    | `/api/messages/:convId` |  ✅  | Get messages in a chat   |
-| POST   | `/api/upload`           |  ✅  | Upload an image          |
-| POST   | `/api/messages/audio`   |  ✅  | Upload & send audio msg  |
+| POST   | `/api/upload`           |  ✅  | Upload an image (returns Cloudinary URL) |
+| POST   | `/api/messages/audio`   |  ✅  | Upload & send audio msg (stored on Cloudinary) |
 
 ---
 
@@ -189,11 +193,27 @@ io(SOCKET_URL, { auth: { token }, transports: ["websocket"] })
 
 ---
 
+## 🖼 Media Storage (Cloudinary)
+
+Uploaded images and audio are stored on **Cloudinary**, not the server's disk.
+
+**Why:** hosts like Render/Railway have an **ephemeral filesystem** — anything written to local disk is wiped on every deploy/restart, so local uploads don't survive. Cloudinary gives each file a permanent CDN URL.
+
+**Flow**
+1. Multer receives the file **in memory** (no disk write).
+2. The API streams the buffer to Cloudinary (`upload_stream`).
+3. Cloudinary returns a permanent `secure_url`, which is stored in MongoDB.
+4. The frontend's `media()` helper ([frontend/src/utils/media.js](frontend/src/utils/media.js)) renders full URLs as-is and prefixes bare filenames (committed defaults) with `VITE_PUBLIC_FOLDER`.
+
+Requires `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (set locally and in the Render dashboard).
+
+---
+
 ## 🔒 Security Notes
 - Passwords hashed with **bcrypt**; never returned in API responses.  
 - **JWT** required on all non-auth routes; identity derived from the token, not the request body.  
 - **Rate limiting** on auth endpoints (login / register / forgot-password).  
-- **Upload validation**: images and audio restricted by MIME type and size; filenames sanitized.  
+- **Upload validation**: images and audio restricted by MIME type and size; files buffered in memory and streamed to Cloudinary (no disk writes).  
 - User updates are **field-whitelisted** to prevent mass-assignment (e.g. `isAdmin`).  
 - Secrets live in environment variables and are excluded from version control.  
 
@@ -206,6 +226,8 @@ io(SOCKET_URL, { auth: { token }, transports: ["websocket"] })
 - **Socket Server:** Railway  
 
 > The frontend, API, and socket are coupled by the JWT. When deploying the auth changes, update them close together and ensure `ACCESS_TOKEN_SECRET` is set in each service's dashboard (identical value on API and Socket).
+>
+> The API also needs `Mongo_Url` and the `CLOUDINARY_*` variables set in the **Render** dashboard (the committed `.env` was removed, so dashboard env vars are the single source of truth).
 
 ---
 

@@ -11,11 +11,11 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from 'react-toastify';
 import ConfirmDialog from "../ConfirmDialogue/confirmDialogue";
+import { media } from "../../utils/media";
 
 function Sidebar() {
   const { user, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
-  const PF = import.meta.env.VITE_PUBLIC_FOLDER;
   const isMobile = window.innerWidth <= 768;
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -43,7 +43,7 @@ function Sidebar() {
           >
             <div className="relative">
               <img
-                src={user.profilePicture ? PF + user.profilePicture : PF + "profile.jpg"}
+                src={user.profilePicture ? media(user.profilePicture) : media("profile.jpg")}
                 className="w-20 h-20 rounded-full object-cover ring-2 ring-indigo-500"
               />
             </div>

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { media } from "../../utils/media";
 
 function Online({ conversation, currentUser, onlineUsers = [] }) {
-    const PF = import.meta.env.VITE_PUBLIC_FOLDER;
     const [user, setUser] = useState(null);
 
     // get user(friend)
@@ -29,7 +29,7 @@ function Online({ conversation, currentUser, onlineUsers = [] }) {
             <div className="relative shrink-0">
                 <img
                     className="w-11 h-11 rounded-full object-cover"
-                    src={user.profilePicture ? PF + user.profilePicture : PF + 'profile.jpg'}
+                    src={user.profilePicture ? media(user.profilePicture) : media('profile.jpg')}
                     alt={user.username}
                 />
                 {isOnline && (

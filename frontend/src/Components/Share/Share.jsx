@@ -4,9 +4,9 @@ import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import EmojiPicker from "emoji-picker-react";
 import { toast } from "react-toastify";
+import { media } from "../../utils/media";
 
 function Share() {
-  const PF = import.meta.env.VITE_PUBLIC_FOLDER;
   const { user } = useContext(AuthContext);
   const [desc, setDesc] = useState("");
   const [file, setFile] = useState(null);
@@ -56,7 +56,7 @@ function Share() {
       <div className="flex gap-3 px-5 pt-5 pb-3">
         <img
           className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-100 shrink-0 mt-0.5"
-          src={user.profilePicture ? PF + user.profilePicture : PF + "profile.jpg"}
+          src={user.profilePicture ? media(user.profilePicture) : media("profile.jpg")}
           alt="User"
         />
         <textarea

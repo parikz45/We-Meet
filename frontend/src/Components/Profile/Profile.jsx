@@ -8,6 +8,7 @@ import { useParams } from "react-router";
 import { CameraAlt, Edit, PersonAddAlt1, Check, LocationOnOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { media } from "../../utils/media";
 
 const API = "https://we-meet-9jye.onrender.com";
 
@@ -15,7 +16,6 @@ function Profile() {
   const [user, setUser] = useState({});
   const [postCount, setPostCount] = useState(0);
   const [following, setFollowing] = useState(false);
-  const PF = import.meta.env.VITE_PUBLIC_FOLDER;
   const userName = useParams().username;
   const navigate = useNavigate();
   const { user: currentUser, dispatch } = useContext(AuthContext);
@@ -107,7 +107,7 @@ function Profile() {
             {/* Cover */}
             <div className="relative h-44 sm:h-52 bg-gray-100">
               <img
-                src={user.coverPicture ? PF + user.coverPicture : PF + "3.jpeg"}
+                src={user.coverPicture ? media(user.coverPicture) : media("3.jpeg")}
                 alt="cover"
                 className="w-full h-full object-cover"
               />
@@ -134,8 +134,8 @@ function Profile() {
                     <img
                       src={
                         user.profilePicture
-                          ? PF + user.profilePicture
-                          : PF + "profile.jpg"
+                          ? media(user.profilePicture)
+                          : media("profile.jpg")
                       }
                       alt="profile"
                       className="w-28 h-28 rounded-full object-cover ring-4 ring-white shadow-md"
