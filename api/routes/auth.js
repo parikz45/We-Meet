@@ -42,6 +42,12 @@ router.post("/register", authLimiter, async (req, res) => {
     const { password, ...other } = user._doc;
     res.status(200).json({ ...other, token });
   } catch (err) {
+    // Duplicate key (unique username/email) -> tell the user which one is taken.
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyPattern || {})[0] || "account";
+      const label = field.charAt(0).toUpperCase() + field.slice(1);
+      return res.status(409).json(`${label} already exists`);
+    }
     console.error("❌ Registration error:", err);
     res.status(500).json("Registration failed");
   }
