@@ -11,6 +11,8 @@ const path = require("path");
 const Message = require("./Models/Message");
 const verifyToken = require("./middleware/verifyToken");
 const { uploadToCloudinary } = require("./utils/cloudinary");
+const jwt = require("jsonwebtoken");
+const { Server } = require("socket.io");
 
 // Load routes
 const userRoute = require('./routes/user');
@@ -141,6 +143,59 @@ mongoose.connect(process.env.Mongo_Url, {
 
 // Start Server
 const server = http.createServer(app);
+
+// ==========================
+// Socket.IO (real-time chat + presence) — runs on the same server as the API
+// ==========================
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+// Authenticate every socket connection with the same access token as the REST API.
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+  if (!token) return next(new Error("Not authenticated"));
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+    if (err) return next(new Error("Invalid token"));
+    socket.user = payload; // { id, isAdmin }
+    next();
+  });
+});
+
+let onlineUsers = [];
+const addUser = (userId, socketId) => {
+  if (!onlineUsers.some((u) => u.userId === userId)) {
+    onlineUsers.push({ userId, socketId });
+  }
+};
+const removeUser = (socketId) => {
+  onlineUsers = onlineUsers.filter((u) => u.socketId !== socketId);
+};
+const getUser = (userId) => onlineUsers.find((u) => u.userId === userId);
+
+io.on("connection", (socket) => {
+  // Identity comes from the verified token, never from the client payload.
+  const userId = socket.user.id;
+  addUser(userId, socket.id);
+  io.emit("getUsers", onlineUsers);
+
+  socket.on("sendMessage", (message) => {
+    const receiver = getUser(message.receiverId);
+    if (receiver) {
+      io.to(receiver.socketId).emit("getMessage", { ...message, sender: userId });
+    }
+  });
+
+  socket.on("disconnect", () => {
+    removeUser(socket.id);
+    io.emit("getUsers", onlineUsers);
+  });
+});
+
 const PORT = process.env.PORT || 8800;
 
 if (!PORT) {

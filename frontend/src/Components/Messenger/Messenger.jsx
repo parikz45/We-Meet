@@ -198,8 +198,8 @@ function Messenger() {
     // setup socket connection and receive real-time messages
     useEffect(() => {
         const token = JSON.parse(localStorage.getItem("user"))?.token;
-        socket.current = io("wss://we-meet-production.up.railway.app", {
-            transports: ['websocket'],
+        // Socket.IO now runs on the same Render backend as the REST API.
+        socket.current = io("https://we-meet-9jye.onrender.com", {
             auth: { token },
         });
 

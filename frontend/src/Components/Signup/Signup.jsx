@@ -34,7 +34,7 @@ function Signup() {
       navigate("/details");
     } catch (err) {
       console.log(err);
-      toast.error("Registration failed!");
+      toast.error(err?.response?.data || "Registration failed!");
     }
   };
 
